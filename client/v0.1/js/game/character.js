@@ -4,6 +4,8 @@ CHARACTER =
 	strDescription:"The character, his location, emotional state and anything else pertitant to his existance.",
 	strEmotionalState:"Bemused.",
 
+	strCharName:"Thrud",
+
 	intXPos:null,
 	intYPos:null,
 

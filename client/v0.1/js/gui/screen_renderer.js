@@ -66,13 +66,6 @@ SCREEN_RENDERER =
 		CHARACTER.intYPos = _objNewCoords["y"];
 
 		this._renderUpdatedBaseTiles(_arrChangedTiles)
-
-		/*var _strCurrWrapperID = "tileY_%1_X_%2_HolderID".replace("%1", CHARACTER.intYPos).replace("%2", CHARACTER.intXPos)
-		var _objCurrWrapper = this.objDOM.getElementById(_strCurrWrapperID);
-
-		var _strNewWrapperID = "tileY_%1_X_%2_HolderID".replace("%1", _objNewCoords["y"]).replace("%2", _objNewCoords["x"])
-		var _objNewWrapper = this.objDOM.getElementById(_strNewWrapperID);*/
-
 	},
 
 	_renderAllTiles:function ()

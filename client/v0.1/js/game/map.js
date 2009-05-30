@@ -27,17 +27,20 @@ MAP_HOLDER =
 	handleEvent_navigate:function(_strWhatDirection)
 	{
 		this.debug("MAP_HOLDER.handleEvent_navigate(_strWhatDirection: '" + _strWhatDirection + "')",1);
-		if (this.localMoveValidator(_strWhatDirection))
+		if (this._localMoveValidator(_strWhatDirection))
 		{
-			var _objData = {move:_strWhatDirection};
-			SERVER_IO.send("SERVER_navigateRequest", "POST","turn",_objData)
+			//var _objData = {move:_strWhatDirection};
+			//SERVER_IO.send("SERVER_navigateRequest", "POST","turn",_objData)
+			var _objFakeMove = this._generateFakedMove(_strWhatDirection);
+			EM.trigger("SERVER_navigateRequest", _objFakeMove);
 		}
 	},
+
 
 	handleEvent_SERVER_navigateRequest:function(_objReturnInfo)
 	{
 		this.debug("MAP_HOLDER.handleEvent_SERVER_navigateRequest(_objReturnInfo:)",1,_objReturnInfo);
-		var _objNewCoords = {"x":_objReturnInfo["x"],"y":_objReturnInfo["y"]}
+		var _objNewCoords = {"x":_objReturnInfo["x"],"y":_objReturnInfo["y"]};
 		EM.trigger("updateScreen", {"Character":_objNewCoords});
 	},
 
@@ -109,9 +112,64 @@ MAP_HOLDER =
 	},
 
 	// Placeholder function
-	localMoveValidator : function(_strWhatDirection)
+	_localMoveValidator : function(_strWhatDirection)
 	{
-		return true;
+		var _intPlayerX = CHARACTER.intXPos;
+		var _intPlayerY = CHARACTER.intYPos;
+		switch (_strWhatDirection)
+		{
+			case "n":
+				_intPlayerY--;
+			break;
+			case "s":
+				_intPlayerY++;
+			break;
+			case "w":
+				_intPlayerX--;
+			break;
+			case "e":
+				_intPlayerX++;
+			break;
+		}
+
+		if (this.arrMapTiles[_intPlayerX][_intPlayerY]["type"] != "solid")
+		{
+			MESSAGER.say(CHARACTER.strCharName + " has moved!");
+			return true;
+		}
+		MESSAGER.say(CHARACTER.strCharName + " has has hit head on wall, ouchies!");
+		return false;
+	},
+
+	_generateFakedMove:function(_strWhatDirection)
+	{
+		var _intPlayerX = CHARACTER.intXPos;
+		var _intPlayerY = CHARACTER.intYPos;
+		switch (_strWhatDirection)
+		{
+			case "n":
+				_intPlayerY--;
+			break;
+			case "s":
+				_intPlayerY++;
+			break;
+			case "w":
+				_intPlayerX--;
+			break;
+			case "e":
+				_intPlayerX++;
+			break;
+		}
+		var _objFakeMovementRequest =
+		{
+			'turns_taken': 1,
+		  'current_turn_id': 123,
+		  'current_turn_url': 'turns/123',
+		  'x': _intPlayerX,
+		  'y': _intPlayerY
+		}
+		this.debug("_objFakeMovementRequest",4,_objFakeMovementRequest)
+		return _objFakeMovementRequest;
 	},
 
 
