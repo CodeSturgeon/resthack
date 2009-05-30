@@ -1,0 +1,6 @@
+1) Examine wether tile wrappers should sit within the renderer's remit
+2) Add local move checking code
+3) Add fake return generator for movements so ickle man can move round da map!
+4) Add player messaging service, populate with local messages for now
+5) Discuss with Nick about return messages for actions
+6) Investigate JSON libraries.
