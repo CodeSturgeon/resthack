@@ -75,7 +75,6 @@ SCREEN_RENDERER =
 		this.debug("MAP_HOLDER.intMapXEnd:" + MAP_HOLDER.intMapXEnd + "\nMAP_HOLDER.intMapYEnd" + MAP_HOLDER.intMapYEnd,1);
 		while (intXCount <= MAP_HOLDER.intMapXEnd)
 		{
-			//alert("intXCount: " + intXCount)
 			var intYCount = parseInt(MAP_HOLDER.intMapYStart);
 			while (intYCount <= MAP_HOLDER.intMapYEnd)
 			{
@@ -93,23 +92,17 @@ SCREEN_RENDERER =
 			intXCount++;
 		}
 		this.objDOM.getElementById("mapOutputID").innerHTML = _htmOutputHTML;
-		//this.debug("_htmOutputHTML:\n" + _htmOutputHTML,1);
 	},
 
 	_renderUpdatedBaseTiles:function(_arrWhatTiles)
 	{
-		//alert("_renderUpdatedTiles, _arrWhatTiles.length:" +  _arrWhatTiles.length)
-		var count = 0
+		var count = 0;
 		while (count < _arrWhatTiles.length)
 		{
 			var _objCurrTile = _arrWhatTiles[count];
-			//alert('_objCurrTile["x"]' + _objCurrTile["x"] + '\n_objCurrTile["y"]: ' + _objCurrTile["y"]);
 			var _strNewTileHTML = this._getHTMLForCoords(_objCurrTile["x"], _objCurrTile["y"]);
 			var _strWrapperID = "tileY_%1_X_%2_HolderID".replace("%1", _objCurrTile["y"]).replace("%2", _objCurrTile["x"])
-
 			var _objCurrTileHolder = this.objDOM.getElementById(_strWrapperID);
-			//alert(_objCurrTileHolder)
-			//alert(_objCurrTileHolder.id)
 			_objCurrTileHolder.innerHTML = _strNewTileHTML;
 			count++;
 		}
@@ -129,7 +122,6 @@ SCREEN_RENDERER =
 
 	_createBaseTileHTML:function(_objWhatMapTile)
 	{
-		//this.debug("SCREEN_RENDERER._createTileHTML(_objWhatMapTile: )",1, _objWhatMapTile);
 		var _htmBaseHTML = this.objTileHTMLFragments[_objWhatMapTile["type"]];
 		_htmBaseHTML = _htmBaseHTML.replace("%2", parseInt(_objWhatMapTile["x"]));
 		_htmBaseHTML = _htmBaseHTML.replace("%1", parseInt(_objWhatMapTile["y"]));

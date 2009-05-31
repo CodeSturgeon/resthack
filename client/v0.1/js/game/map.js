@@ -137,7 +137,7 @@ MAP_HOLDER =
 			MESSAGER.say(CHARACTER.strCharName + " has moved!");
 			return true;
 		}
-		MESSAGER.say(CHARACTER.strCharName + " has has hit head on wall, ouchies!");
+		MESSAGER.say(CHARACTER.strCharName + " has hit head on wall, ouchies!");
 		return false;
 	},
 
