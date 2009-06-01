@@ -12,18 +12,20 @@ def init_model(engine):
     meta.Session.configure(bind=engine)
     meta.engine = engine
 
+class Map(_Base):
+    __tablename__ = 'maps'
+    id = sa.Column(sa.types.Integer, primary_key=True)
+    name = sa.Column(sa.types.String(5), nullable=False)
+    x_min = sa.Column(sa.types.Integer, nullable=False)
+    x_max = sa.Column(sa.types.Integer, nullable=False)
+    y_min = sa.Column(sa.types.Integer, nullable=False)
+    y_max = sa.Column(sa.types.Integer, nullable=False)
 
 class Tile(_Base):
     __tablename__ = 'tiles'
     id = sa.Column(sa.types.Integer, primary_key=True)
-    x = sa.Column(sa.types.Integer)
-    y = sa.Column(sa.types.Integer)
-
-class Map(_Base):
-    __tablename__ = 'maps'
-    id = sa.Column(sa.types.Integer, primary_key=True)
-    name = sa.Column(sa.types.String(5))
-    x_min = sa.Column(sa.types.Integer)
-    x_max = sa.Column(sa.types.Integer)
-    y_min = sa.Column(sa.types.Integer)
-    y_max = sa.Column(sa.types.Integer)
+    map_id = sa.Column(sa.types.Integer, sa.ForeignKey('maps.id'),
+                        nullable=False)
+    x = sa.Column(sa.types.Integer, nullable=False)
+    y = sa.Column(sa.types.Integer, nullable=False)
+    map = orm.relation(Map, backref=orm.backref('tiles', order_by=x))
