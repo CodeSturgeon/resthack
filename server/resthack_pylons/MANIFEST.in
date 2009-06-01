@@ -1,0 +1,3 @@
+include resthack_pylons/config/deployment.ini_tmpl
+recursive-include resthack_pylons/public *
+recursive-include resthack_pylons/templates *
