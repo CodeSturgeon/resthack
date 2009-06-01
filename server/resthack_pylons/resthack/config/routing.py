@@ -23,4 +23,7 @@ def make_map():
     map.connect('/{controller}/{action}')
     map.connect('/{controller}/{action}/{id}')
 
+    map.resource('map', 'map')
+    map.resource('turn', 'turn')
+
     return map
