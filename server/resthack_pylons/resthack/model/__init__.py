@@ -1,36 +1,29 @@
 """The application's model objects"""
 import sqlalchemy as sa
 from sqlalchemy import orm
+from sqlalchemy.ext.declarative import declarative_base
 
 from resthack.model import meta
 
+_Base = declarative_base()
+
 def init_model(engine):
     """Call me before using any of the tables or classes in the model"""
-    ## Reflected tables must be defined and mapped here
-    #global reflected_table
-    #reflected_table = sa.Table("Reflected", meta.metadata, autoload=True,
-    #                           autoload_with=engine)
-    #orm.mapper(Reflected, reflected_table)
-    #
     meta.Session.configure(bind=engine)
     meta.engine = engine
 
 
-## Non-reflected tables may be defined and mapped at module level
-#foo_table = sa.Table("Foo", meta.metadata,
-#    sa.Column("id", sa.types.Integer, primary_key=True),
-#    sa.Column("bar", sa.types.String(255), nullable=False),
-#    )
-#
-#class Foo(object):
-#    pass
-#
-#orm.mapper(Foo, foo_table)
+class Tile(_Base):
+    __tablename__ = 'tiles'
+    id = sa.Column(sa.types.Integer, primary_key=True)
+    x = sa.Column(sa.types.Integer)
+    y = sa.Column(sa.types.Integer)
 
-
-## Classes for reflected tables may be defined here, but the table and
-## mapping itself must be done in the init_model function
-#reflected_table = None
-#
-#class Reflected(object):
-#    pass
+class Map(_Base):
+    __tablename__ = 'maps'
+    id = sa.Column(sa.types.Integer, primary_key=True)
+    name = sa.Column(sa.types.String(5))
+    x_min = sa.Column(sa.types.Integer)
+    x_max = sa.Column(sa.types.Integer)
+    y_min = sa.Column(sa.types.Integer)
+    y_max = sa.Column(sa.types.Integer)
