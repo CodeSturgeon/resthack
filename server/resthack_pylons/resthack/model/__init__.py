@@ -28,4 +28,5 @@ class Tile(_Base):
                         nullable=False)
     x = sa.Column(sa.types.Integer, nullable=False)
     y = sa.Column(sa.types.Integer, nullable=False)
+    type = sa.Column(sa.types.String(5), nullable=False)
     map = orm.relation(Map, backref=orm.backref('tiles', order_by=x))
