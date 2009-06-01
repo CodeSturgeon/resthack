@@ -6,7 +6,7 @@ except ImportError:
     from setuptools import setup, find_packages
 
 setup(
-    name='resthack_pylons',
+    name='resthack',
     version='0.1',
     description='',
     author='',
@@ -20,8 +20,8 @@ setup(
     packages=find_packages(exclude=['ez_setup']),
     include_package_data=True,
     test_suite='nose.collector',
-    package_data={'resthack_pylons': ['i18n/*/LC_MESSAGES/*.mo']},
-    #message_extractors={'resthack_pylons': [
+    package_data={'resthack': ['i18n/*/LC_MESSAGES/*.mo']},
+    #message_extractors={'resthack': [
     #        ('**.py', 'python', None),
     #        ('templates/**.mako', 'mako', {'input_encoding': 'utf-8'}),
     #        ('public/**', 'ignore', None)]},
@@ -29,7 +29,7 @@ setup(
     paster_plugins=['PasteScript', 'Pylons'],
     entry_points="""
     [paste.app_factory]
-    main = resthack_pylons.config.middleware:make_app
+    main = resthack.config.middleware:make_app
 
     [paste.app_install]
     main = pylons.util:PylonsInstaller

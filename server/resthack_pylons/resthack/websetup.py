@@ -1,13 +1,13 @@
-"""Setup the resthack_pylons application"""
+"""Setup the resthack application"""
 import logging
 
-from resthack_pylons.config.environment import load_environment
-from resthack_pylons.model import meta
+from resthack.config.environment import load_environment
+from resthack.model import meta
 
 log = logging.getLogger(__name__)
 
 def setup_app(command, conf, vars):
-    """Place any commands to setup resthack_pylons here"""
+    """Place any commands to setup resthack here"""
     load_environment(conf.global_conf, conf.local_conf)
 
     # Create the tables if they don't already exist

@@ -6,10 +6,10 @@ from pylons import config
 from pylons.error import handle_mako_error
 from sqlalchemy import engine_from_config
 
-import resthack_pylons.lib.app_globals as app_globals
-import resthack_pylons.lib.helpers
-from resthack_pylons.config.routing import make_map
-from resthack_pylons.model import init_model
+import resthack.lib.app_globals as app_globals
+import resthack.lib.helpers
+from resthack.config.routing import make_map
+from resthack.model import init_model
 
 def load_environment(global_conf, app_conf):
     """Configure the Pylons environment via the ``pylons.config``
@@ -23,11 +23,11 @@ def load_environment(global_conf, app_conf):
                  templates=[os.path.join(root, 'templates')])
 
     # Initialize config with the basic options
-    config.init_app(global_conf, app_conf, package='resthack_pylons', paths=paths)
+    config.init_app(global_conf, app_conf, package='resthack', paths=paths)
 
     config['routes.map'] = make_map()
     config['pylons.app_globals'] = app_globals.Globals()
-    config['pylons.h'] = resthack_pylons.lib.helpers
+    config['pylons.h'] = resthack.lib.helpers
 
     # Create the Mako TemplateLookup, with the default auto-escaping
     config['pylons.app_globals'].mako_lookup = TemplateLookup(

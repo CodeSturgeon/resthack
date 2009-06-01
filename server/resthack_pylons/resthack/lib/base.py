@@ -5,7 +5,7 @@ Provides the BaseController class for subclassing.
 from pylons.controllers import WSGIController
 from pylons.templating import render_mako as render
 
-from resthack_pylons.model import meta
+from resthack.model import meta
 
 class BaseController(WSGIController):
 
