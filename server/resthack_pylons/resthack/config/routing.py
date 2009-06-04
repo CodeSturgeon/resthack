@@ -20,10 +20,15 @@ def make_map():
 
     # CUSTOM ROUTES HERE
 
-    map.connect('/{controller}/{action}')
-    map.connect('/{controller}/{action}/{id}')
-
     map.resource('map', 'map')
     map.resource('turn', 'turn')
+
+    #map.connect('/map', controller='map', action='index',
+    #            conditions=dict(method=['GET', 'HEAD']))
+    #map.connect('/map/{id}', controller='map', action='show',
+    #            conditions=dict(method=['GET']))
+
+    map.connect('/{controller}/{action}')
+    map.connect('/{controller}/{action}/{id}')
 
     return map
