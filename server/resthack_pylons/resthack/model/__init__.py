@@ -37,3 +37,5 @@ class Thing(_Base):
     x = sa.Column(sa.types.Integer, nullable=False)
     y = sa.Column(sa.types.Integer, nullable=False)
     type = sa.Column(sa.types.String(6), nullable=False)
+    def __repr__(self):
+        return '<Thing %s (%d,%d)>'%(self.type,self.x,self.y)
