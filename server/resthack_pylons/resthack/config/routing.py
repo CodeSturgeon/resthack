@@ -22,6 +22,8 @@ def make_map():
 
     map.resource('map', 'map')
     map.resource('turn', 'turn')
+    map.connect('/space/{x1},{y1}-{x2},{y2}', controller='space',
+                    action='query')
 
     #map.connect('/map', controller='map', action='index',
     #            conditions=dict(method=['GET', 'HEAD']))
