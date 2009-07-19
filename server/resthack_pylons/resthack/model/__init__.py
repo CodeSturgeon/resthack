@@ -12,6 +12,7 @@ def init_model(engine):
     meta.Session.configure(bind=engine)
     meta.engine = engine
 
+# v.1
 class Map(_Base):
     __tablename__ = 'maps'
     id = sa.Column(sa.types.Integer, primary_key=True)
@@ -31,6 +32,7 @@ class Tile(_Base):
     type = sa.Column(sa.types.String(5), nullable=False)
     map = orm.relation(Map, backref=orm.backref('tiles', order_by=x))
 
+# v.2
 class Thing(_Base):
     __tablename__ = 'things'
     id = sa.Column(sa.types.Integer, primary_key=True)
@@ -39,3 +41,14 @@ class Thing(_Base):
     type = sa.Column(sa.types.String(6), nullable=False)
     def __repr__(self):
         return '<Thing %s (%d,%d)>'%(self.type,self.x,self.y)
+
+# v.3
+class Path(_Base):
+    __tablename__ = 'paths'
+    id = sa.Column(sa.types.Integer, primary_key=True)
+    x = sa.Column(sa.types.Integer, nullable=False)
+    y = sa.Column(sa.types.Integer, nullable=False)
+    u = sa.Column(sa.types.Boolean, default=False, nullable=False)
+    d = sa.Column(sa.types.Boolean, default=False, nullable=False)
+    l = sa.Column(sa.types.Boolean, default=False, nullable=False)
+    r = sa.Column(sa.types.Boolean, default=False, nullable=False)
