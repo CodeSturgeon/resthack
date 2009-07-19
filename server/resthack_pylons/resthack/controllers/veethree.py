@@ -14,7 +14,7 @@ import sqlalchemy as sa
 import simplejson
 
 log = logging.getLogger(__name__)
-view_radius = 1 # Effective 21x21
+view_radius = 5 # Effective 21x21
 moves = {'u': (0,-1), 'd': (0,1), 'l': (-1,0), 'r': (1,0)}
 
 def custom_encode(obj):
