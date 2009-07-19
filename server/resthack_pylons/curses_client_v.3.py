@@ -40,7 +40,7 @@ def move(direction):
     log = get_log()
     log.info('moving %s'%direction)
     params = urllib.urlencode(dict(move=direction))
-    url = 'http://localhost:5421/veethree/pos_post'
+    url = 'http://localhost:5421/pos'
     try:
         resp = urllib2.urlopen(url, params)
     except urllib2.HTTPError, e:
@@ -58,7 +58,7 @@ def init_map(x_max,y_max):
         #print '#'*x_max
         w_map.addstr(y,1,'#'*x_max)
     w_map.refresh()
-    url = 'http://localhost:5421/veethree/pos_get'
+    url = 'http://localhost:5421/pos'
     resp = urllib2.urlopen(url).read()
     data = simplejson.loads(resp)
     update_map(data)

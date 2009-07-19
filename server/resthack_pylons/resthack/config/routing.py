@@ -25,10 +25,10 @@ def make_map():
     map.connect('/space/{x1},{y1}-{x2},{y2}', controller='space',
                     action='query')
 
-    #map.connect('/map', controller='map', action='index',
-    #            conditions=dict(method=['GET', 'HEAD']))
-    #map.connect('/map/{id}', controller='map', action='show',
-    #            conditions=dict(method=['GET']))
+    map.connect('/pos', controller='veethree', action='pos_get',
+                conditions=dict(method=['GET', 'HEAD']))
+    map.connect('/pos', controller='veethree', action='pos_post',
+                conditions=dict(method=['POST']))
 
     map.connect('/{controller}/{action}')
     map.connect('/{controller}/{action}/{id}')
