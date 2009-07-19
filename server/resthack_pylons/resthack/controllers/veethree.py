@@ -8,7 +8,7 @@ from resthack.lib.base import BaseController, render
 from resthack.model import Path, Avatar
 from resthack.model.meta import Session
 
-from paste.httpexceptions import HTTPClientError
+from webob.exc import HTTPClientError
 
 import sqlalchemy as sa
 import simplejson
