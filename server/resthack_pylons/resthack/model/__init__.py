@@ -52,3 +52,9 @@ class Path(_Base):
     d = sa.Column(sa.types.Boolean, default=False, nullable=False)
     l = sa.Column(sa.types.Boolean, default=False, nullable=False)
     r = sa.Column(sa.types.Boolean, default=False, nullable=False)
+
+class Avatar(_Base):
+    __tablename__ = 'avatars'
+    id = sa.Column(sa.types.Integer, primary_key=True)
+    x = sa.Column(sa.types.Integer, nullable=False)
+    y = sa.Column(sa.types.Integer, nullable=False)
