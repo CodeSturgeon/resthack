@@ -52,9 +52,17 @@ class Path(_Base):
     d = sa.Column(sa.types.Boolean, default=False, nullable=False)
     l = sa.Column(sa.types.Boolean, default=False, nullable=False)
     r = sa.Column(sa.types.Boolean, default=False, nullable=False)
+    def __repr__(self):
+        exits = []
+        for e in ['u','d','l','r']:
+            if getattr(self, e):
+                exits.append(e)
+        return '<Path (%s,%s)%s>'%(self.x,self.y,exits)
 
 class Avatar(_Base):
     __tablename__ = 'avatars'
     id = sa.Column(sa.types.Integer, primary_key=True)
     x = sa.Column(sa.types.Integer, nullable=False)
     y = sa.Column(sa.types.Integer, nullable=False)
+    def __repr__(self):
+        return '<Avatar %d (%d,%d)>'%(self.id,self.x,self.y)
