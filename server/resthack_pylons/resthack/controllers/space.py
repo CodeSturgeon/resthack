@@ -15,7 +15,7 @@ def dump_things(things):
     ret = []
     for thing in things:
         rep = {}
-        for attr in ['x','y','id','type']:
+        for attr in ['x','y','type']:
             rep[attr] = getattr(thing, attr)
         ret.append(rep)
     return simplejson.dumps(ret)
