@@ -16,6 +16,7 @@ class BaseController(WSGIController):
         """WSGIController hackery.
         Hijack the calling to trap HTTPExceptions and note their message.
         This allows the message to be extracted propperly by error controller.
+        Based on ideas from: http://www.siafoo.net/article/75
         """
         try:
             __traceback_hide__ = 'before_and_this'

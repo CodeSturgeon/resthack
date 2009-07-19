@@ -45,12 +45,12 @@ class VeethreeController(BaseController):
     def pos_post(self):
         move = request.POST.get('move','').lower()
         if move not in moves.keys():
-            return 'bad move'
+            raise HTTPClientError('bad move')
         avatar = Session.query(Avatar).one()
         current_path = Session.query(Path).filter(sa.and_(
                             Path.x == avatar.x, Path.y == avatar.y)).one()
         if move not in current_path.exit_list():
-            return 'cannot go that way'
+            raise HTTPClientError('cannot go that way')
         avatar.x += moves[move][0]
         avatar.y += moves[move][1]
         Session.commit()

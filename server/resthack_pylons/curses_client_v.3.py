@@ -7,6 +7,7 @@ import logging
 from inspect import getouterframes, currentframe
 
 w_log = ''
+x = y = 10
 
 class WindowHandler(logging.Handler):
     offset = 1
@@ -40,9 +41,15 @@ def move(direction):
     log.info('moving %s'%direction)
     params = urllib.urlencode(dict(move=direction))
     url = 'http://localhost:5421/veethree/pos_post'
-    resp = urllib2.urlopen(url, params).read()
-    data = simplejson.loads(resp)
-    update_map(data)
+    try:
+        resp = urllib2.urlopen(url, params)
+    except urllib2.HTTPError, e:
+        resp = e
+    try:
+        data = simplejson.loads(resp.read())
+        update_map(data)
+    except ValueError:
+        log.warn(resp)
 
 def init_map(x_max,y_max):
     log = get_log()
@@ -57,11 +64,19 @@ def init_map(x_max,y_max):
     update_map(data)
 
 def update_map(data):
+    global x,y
     log = get_log()
     log.debug('updating map')
+    if data.has_key('code'):
+        log.warn(data['message'])
+        return
     for path in data['paths']:
         w_map.addch(path['y']+1,path['x']+1,' ')
-    w_map.addch(data['avatar']['y']+1,data['avatar']['x']+1,'*')
+    w_map.addch(y+1,x+1,' ')
+    x = data['avatar']['x']
+    y = data['avatar']['y']
+    w_map.addch(y+1,x+1,'*')
+    w_map.addch(1,1,'#')
     w_map.refresh()
 
 screen = curses.initscr()
@@ -84,7 +99,6 @@ screen.refresh()
 
 qh = config_log()
 log = logging.getLogger()
-x = y = 10
 c = ''
 valid_moves = ['u','d','r','l']
 init_map(40,20)
