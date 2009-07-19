@@ -18,7 +18,7 @@ def dump_things(things):
         for attr in ['x','y','type']:
             rep[attr] = getattr(thing, attr)
         ret.append(rep)
-    return simplejson.dumps(ret)
+    return simplejson.dumps(ret, indent=2)
 
 class SpaceController(BaseController):
 
