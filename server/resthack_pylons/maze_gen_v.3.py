@@ -86,10 +86,10 @@ while 1:
 # make path objects and store them
 for x,y in cleared:
     p = Path(x=x,y=y)
-    if (x+1,y) in cleared: p.u = True
-    if (x-1,y) in cleared: p.d = True
-    if (x,y-1) in cleared: p.l = True
-    if (x,y+1) in cleared: p.r = True
+    if (x+1,y) in cleared: p.r = True
+    if (x-1,y) in cleared: p.l = True
+    if (x,y-1) in cleared: p.u = True
+    if (x,y+1) in cleared: p.d = True
     Session.add(p)
 Session.commit()
 dump_maze()

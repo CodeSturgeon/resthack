@@ -39,7 +39,7 @@ def move(direction):
     log = get_log()
     log.info('moving %s'%direction)
     params = urllib.urlencode(dict(move=direction))
-    url = 'http://localhost:5421/space/move'
+    url = 'http://localhost:5421/veethree/pos_post'
     resp = urllib2.urlopen(url, params).read()
     data = simplejson.loads(resp)
     update_map(data)
@@ -59,8 +59,9 @@ def init_map(x_max,y_max):
 def update_map(data):
     log = get_log()
     log.debug('updating map')
-    for path in data:
+    for path in data['paths']:
         w_map.addch(path['y']+1,path['x']+1,' ')
+    w_map.addch(data['avatar']['y']+1,data['avatar']['x']+1,'*')
     w_map.refresh()
 
 screen = curses.initscr()

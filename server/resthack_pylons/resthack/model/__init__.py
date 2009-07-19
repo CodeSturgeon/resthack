@@ -70,3 +70,5 @@ class Avatar(_Base):
     y = sa.Column(sa.types.Integer, nullable=False)
     def __repr__(self):
         return '<Avatar %d (%d,%d)>'%(self.id,self.x,self.y)
+    def serial(self):
+        return {'x':self.x,'y':self.y}
