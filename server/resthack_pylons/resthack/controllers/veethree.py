@@ -9,9 +9,17 @@ from resthack.model import Path, Avatar
 from resthack.model.meta import Session
 
 import sqlalchemy as sa
+import simplejson
 
 log = logging.getLogger(__name__)
-view_radius = 10 # Effective 21x21
+view_radius = 1 # Effective 21x21
+
+def custom_encode(obj):
+    try:
+        getattr(obj, 'serial')
+        return obj.serial()
+    except AttributeError:
+        raise TypeError(repr(obj) + "Yuky JSON!")
 
 class VeethreeController(BaseController):
 
@@ -22,10 +30,10 @@ class VeethreeController(BaseController):
         y_min = avatar.y - view_radius
         y_max = avatar.y + view_radius
         paths = Session.query(Path).filter(sa.and_(
-                    Avatar.x >= x_min, Avatar.x <= x_max,
-                    Avatar.y >= y_min, Avatar.y <= y_max
+                    Path.x >= x_min, Path.x <= x_max,
+                    Path.y >= y_min, Path.y <= y_max
                 )).all()
-        return paths
+        return simplejson.dumps(paths, indent=2, default=custom_encode)
 
     def pos_post(self):
         pass
