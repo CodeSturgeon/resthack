@@ -73,11 +73,9 @@ def update_map(data,w_map):
         return
     for path in data['paths']:
         w_map.addch(path['y']+1,path['x']+1,' ')
-    w_map.addch(y+1,x+1,' ')
     x = data['avatar']['x']
     y = data['avatar']['y']
-    w_map.addch(y+1,x+1,'*')
-    w_map.addch(1,1,'#')
+    w_map.move(y+1,x+1)
     w_map.refresh()
 
 def main(screen):
