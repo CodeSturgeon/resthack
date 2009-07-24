@@ -12,6 +12,7 @@ x = y = 10
 class WindowHandler(logging.Handler):
     offset = 1
     def emit(self, record):
+        if w_log == '': return
         w_log.addstr(self.offset, 1, self.format(record))
         self.offset += 1
         w_log.refresh()
@@ -36,7 +37,7 @@ def get_log(level=logging.DEBUG):
         name = name_caller
     return logging.getLogger(name)
 
-def move(direction):
+def move(direction,w_map):
     log = get_log()
     log.info('moving %s'%direction)
     params = urllib.urlencode(dict(move=direction))
@@ -47,11 +48,11 @@ def move(direction):
         resp = e
     try:
         data = simplejson.loads(resp.read())
-        update_map(data)
+        update_map(data,w_map)
     except ValueError:
         log.warn(resp)
 
-def init_map(x_max,y_max):
+def init_map(x_max,y_max,w_map):
     log = get_log()
     log.debug('setting up map')
     for y in range(1,y_max):
@@ -61,9 +62,9 @@ def init_map(x_max,y_max):
     url = 'http://localhost:5421/pos'
     resp = urllib2.urlopen(url).read()
     data = simplejson.loads(resp)
-    update_map(data)
+    update_map(data,w_map)
 
-def update_map(data):
+def update_map(data,w_map):
     global x,y
     log = get_log()
     log.debug('updating map')
@@ -79,40 +80,39 @@ def update_map(data):
     w_map.addch(1,1,'#')
     w_map.refresh()
 
-screen = curses.initscr()
-curses.noecho()
-screen.clear()
-#curses.curs_set(0)
-log_lines = 10
-w_width = curses.COLS-2
-w_height = curses.LINES-4-log_lines
+def main(screen):
+    global w_log
+    log_lines = 10
+    w_width = curses.COLS-2
+    w_height = curses.LINES-4-log_lines
 
-w_map = curses.newwin(w_height+2,w_width+2,0,0)
-w_map.box()
-w_map.overlay(screen)
+    w_map = curses.newwin(w_height+2,w_width+2,0,0)
+    w_map.box()
+    w_map.overlay(screen)
 
-w_log = curses.newwin(log_lines+2,w_width+2,w_height+2,0)
-w_log.box()
-w_log.overlay(screen)
-
-screen.refresh()
-
-qh = config_log()
-log = logging.getLogger()
-c = ''
-valid_moves = ['u','d','r','l']
-init_map(40,20)
-
-while c != 'q':
-    w_log.clear()
-    qh.offset=1
+    w_log = curses.newwin(log_lines+2,w_width+2,w_height+2,0)
     w_log.box()
-    c = chr(screen.getch())
-    log.debug('key: %s'%c)
-    if c in valid_moves:
-        move(c)
-    else:
-        log.error('bad key %c'%c)
+    w_log.overlay(screen)
 
-curses.endwin()
-curses.echo()
+    screen.refresh()
+
+    qh = config_log()
+    log = logging.getLogger()
+    c = ''
+    valid_moves = ['u','d','r','l']
+    init_map(40,20,w_map)
+
+    while c != 'q':
+        w_log.clear()
+        qh.offset=1
+        w_log.box()
+        c = chr(screen.getch())
+        log.debug('key: %s'%c)
+        if c in valid_moves:
+            move(c,w_map)
+        else:
+            log.error('bad key %c'%c)
+
+    curses.endwin()
+
+curses.wrapper(main)
