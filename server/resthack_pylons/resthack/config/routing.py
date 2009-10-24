@@ -25,9 +25,9 @@ def make_map():
     map.connect('/space/{x1},{y1}-{x2},{y2}', controller='space',
                     action='query')
 
-    map.connect('/pos', controller='veethree', action='pos_get',
+    map.connect('/pos', controller='veefive', action='pos_get',
                 conditions=dict(method=['GET', 'HEAD']))
-    map.connect('/pos', controller='veethree', action='pos_post',
+    map.connect('/pos', controller='veefive', action='pos_post',
                 conditions=dict(method=['POST']))
 
     map.connect('/{controller}/{action}')

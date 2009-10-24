@@ -58,10 +58,20 @@ class Path(_Base):
             if getattr(self, e):
                 exits.append(e)
         return exits
+    def get_shape(self):
+        shape = 0
+        if self.u: shape += 1
+        if self.r: shape += 2
+        if self.d: shape += 4
+        if self.l: shape += 8
+        return shape
     def __repr__(self):
         return '<Path (%s,%s)%s>'%(self.x,self.y,self.exit_list())
     def serial(self):
-        return {'x':self.x,'y':self.y,'exits':self.exit_list()}
+        # v3 spec
+        # return {'x':self.x,'y':self.y,'exits':self.exit_list()}
+        # Quick hack to implement v5
+        return {'x':self.x,'y':self.y,'shape': self.get_shape()}
 
 class Avatar(_Base):
     __tablename__ = 'avatars'

@@ -3,3 +3,6 @@ data
 build
 dist
 resthack.egg-info
+development.sqlite
+*.sqp
+*.pyc
