@@ -4,5 +4,5 @@ build
 dist
 resthack.egg-info
 development.sqlite
-*.sqp
+*.swp
 *.pyc

@@ -73,6 +73,7 @@ def update_map(data,w_map):
         return
     for path in data['tiles']:
         w_map.addch(path['y']+1,path['x']+1,' ')
+        shape = path['shape']
         if shape & 1:
             w_map.addch(path['y'],path['x']+1, ' ')
         if shape & 2:
@@ -112,7 +113,7 @@ def main(screen):
         w_log.clear()
         qh.offset=1
         w_log.box()
-        c = chr(screen.getch())
+        c = int(chr(screen.getch()))
         log.debug('key: %s'%c)
         if c in valid_moves:
             move(c,w_map)
