@@ -24,26 +24,45 @@ def custom_encode(obj):
     except AttributeError:
         raise TypeError(repr(obj) + "Yuky JSON!")
 
+def get_tiles():
+    avatar = Session.query(Avatar).one()
+    x_min = avatar.x - view_radius
+    x_max = avatar.x + view_radius
+    y_min = avatar.y - view_radius
+    y_max = avatar.y + view_radius
+    paths = Session.query(Path).filter(sa.and_(
+                Path.x >= x_min, Path.x <= x_max,
+                Path.y >= y_min, Path.y <= y_max,
+                sa.or_(Path.x == avatar.x, Path.y == avatar.y)
+            )).all()
+    log.debug(avatar)
+    log.debug(paths)
+    visible = []
+
+    tiles = {}
+    for path in paths:
+        tiles[(path.x,path.y)] = path.get_shape()
+
+    master_vectors = shape_vector.values()
+    for step in range(1,view_radius):
+        vectors = list(master_vectors)
+        for v in vectors:
+            qx = avatar.x + (v[0]*step)
+            qy = avatar.y + (v[1]*step)
+            if (qx,qy) in tiles:
+                visible.append({'x':qx,'y':qy,'shape':tiles[(qx,qy)]})
+            else:
+                master_vectors.remove(v)
+    return visible
+
 class VeefiveController(BaseController):
 
     def pos_get(self):
         avatar = Session.query(Avatar).one()
-        x_min = avatar.x - view_radius
-        x_max = avatar.x + view_radius
-        y_min = avatar.y - view_radius
-        y_max = avatar.y + view_radius
-        paths = Session.query(Path).filter(sa.and_(
-                    Path.x >= x_min, Path.x <= x_max,
-                    Path.y >= y_min, Path.y <= y_max,
-                    sa.or_(Path.x == avatar.x, Path.y == avatar.y)
-                )).all()
-        #visible = []
-        # FIXME can still see through walls...
-        #for tile in paths:
-        #    if tile.x == avatar.x or tile.y ==avatar.y:
-        #        visible.append(tile)
-        visible = paths
-        ret = {'tiles':visible, 'avatar':avatar}
+
+        tiles = get_tiles()
+
+        ret = {'tiles':tiles, 'avatar':avatar}
         response.headers['Content-type'] = 'text/plain'
         return simplejson.dumps(ret, indent=2, default=custom_encode)
 
@@ -86,27 +105,17 @@ class VeefiveController(BaseController):
                             Path.x == avatar.x, Path.y == avatar.y)).one()
         if not move & current_path.get_shape():
             raise HTTPClientError('cannot go that way')
+
+        pre_tiles = get_tiles()
+
         avatar.x += shape_vector[move][0]
         avatar.y += shape_vector[move][1]
         Session.commit()
-        if shape_vector[move][0] == 0: # Vertical move
-            x_min = avatar.x - view_radius
-            x_max = avatar.x + view_radius
-            y_min = y_max = avatar.y + (shape_vector[move][1]*view_radius)
-        else: # Horizontal move
-            y_min = avatar.y - view_radius
-            y_max = avatar.y + view_radius
-            x_min = x_max = avatar.x + (shape_vector[move][0]*view_radius)
-        paths = Session.query(Path).filter(sa.and_(
-                    Path.x >= x_min, Path.x <= x_max,
-                    Path.y >= y_min, Path.y <= y_max
-                )).all()
-        visible = paths
-        #visible = []
-        # FIXME can still see through walls...
-        #for tile in paths:
-        #    if tile.x == avatar.x or tile.y ==avatar.y:
-        #        visible.append(tile)
+
+        post_tiles = get_tiles()
+
+        visible = [tile for tile in post_tiles if tile not in pre_tiles]
+
         ret = {'tiles':visible, 'avatar':avatar}
         return simplejson.dumps(ret, indent=2, default=custom_encode)
 
