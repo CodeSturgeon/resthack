@@ -55,7 +55,7 @@ def move(direction,w_map):
 def init_map(x_max,y_max,w_map):
     log = get_log()
     log.debug('setting up map')
-    for y in range(1,y_max):
+    for y in range(1,y_max+1):
         #print '#'*x_max
         w_map.addstr(y,1,'#'*x_max)
     w_map.refresh()
@@ -64,7 +64,7 @@ def init_map(x_max,y_max,w_map):
     data = simplejson.loads(resp)
     update_map(data,w_map)
 
-def update_map(data,w_map):
+def update_map(data,w_map,_cleared=[]):
     global x,y
     log = get_log()
     log.debug('updating map')
@@ -73,18 +73,23 @@ def update_map(data,w_map):
         return
     for path in data['tiles']:
         w_map.addch(path['y']+1,path['x']+1,' ')
+        _cleared.append((path['x'],path['y']))
+    for path in data['tiles']:
         shape = path['shape']
-        if shape & 1:
-            w_map.addch(path['y'],path['x']+1, ' ')
-        if shape & 2:
-            w_map.addch(path['y']+1,path['x']+2, ' ')
-        if shape & 4:
-            w_map.addch(path['y']+2,path['x']+1, ' ')
-        if shape & 8:
-            w_map.addch(path['y']+1,path['x'], ' ')
+        if shape & 1 and (path['x'],path['y']-1) not in _cleared:
+            w_map.addch(path['y'],path['x']+1, '@')
+        if shape & 2 and (path['x']+1,path['y']) not in _cleared:
+            w_map.addch(path['y']+1,path['x']+2, '@')
+        if shape & 4 and (path['x'],path['y']+1) not in _cleared:
+            w_map.addch(path['y']+2,path['x']+1, '@')
+        if shape & 8 and (path['x']-1,path['y']) not in _cleared:
+            w_map.addch(path['y']+1,path['x'], '@')
+    w_map.addch(y+1,x+1,' ')
     x = data['avatar']['x']
     y = data['avatar']['y']
-    w_map.move(y+1,x+1)
+    w_map.addch(y+1,x+1,'*')
+    #w_map.move(y+1,x+1)
+    w_map.move(0,0)
     w_map.refresh()
 
 def main(screen):
