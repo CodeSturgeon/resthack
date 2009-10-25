@@ -35,12 +35,14 @@ def get_tiles():
                 Path.y >= y_min, Path.y <= y_max,
                 sa.or_(Path.x == avatar.x, Path.y == avatar.y)
             )).all()
-    log.debug(avatar)
-    log.debug(paths)
+
     visible = []
 
     tiles = {}
     for path in paths:
+        if path.x == avatar.x and path.y == avatar.y:
+            visible.append({'x': path.x, 'y': path.y,
+                            'shape':path.get_shape()})
         tiles[(path.x,path.y)] = path.get_shape()
 
     master_vectors = shape_vector.values()
@@ -53,6 +55,7 @@ def get_tiles():
                 visible.append({'x':qx,'y':qy,'shape':tiles[(qx,qy)]})
             else:
                 master_vectors.remove(v)
+
     return visible
 
 class VeefiveController(BaseController):
