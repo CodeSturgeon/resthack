@@ -25,6 +25,8 @@ def make_map():
     map.connect('/space/{x1},{y1}-{x2},{y2}', controller='space',
                     action='query')
 
+    map.connect('/dump', controller='veefive', action='maze_dump',
+                conditions=dict(method=['GET', 'HEAD']))
     map.connect('/pos', controller='veefive', action='pos_get',
                 conditions=dict(method=['GET', 'HEAD']))
     map.connect('/pos', controller='veefive', action='pos_post',

@@ -47,6 +47,33 @@ class VeefiveController(BaseController):
         response.headers['Content-type'] = 'text/plain'
         return simplejson.dumps(ret, indent=2, default=custom_encode)
 
+    def maze_dump(self):
+        paths = Session.query(Path).all()
+        maze_tiles = {}
+        for path in paths:
+            maze_tiles[(path.x, path.y)] = ' ' # hex(path.get_shape())[-1].upper()
+
+        lines = []
+
+        tenline = ['   ']
+        unitline = ['   ']
+        for ten in range(0,40,10):
+            tenline.append(str(ten)[0]*10)
+            unitline.append(''.join(map(str,range(10))))
+        lines.append(''.join(tenline))
+        lines.append(''.join(unitline))
+        lines.append('')
+
+        for y in range(20):
+            line = []
+            line.append('%02d '%y)
+            for x in range(40):
+                line.append(maze_tiles.get((x,y), '#'))
+            lines.append(''.join(line))
+        response.headers['Content-type'] = 'text/plain'
+        return '\n'.join(lines)
+
+
     def pos_post(self):
         move = int(request.POST.get('move',0))
         log.debug('move: %s'%move)
