@@ -111,20 +111,34 @@ def main(screen):
 
     qh = config_log()
     log = logging.getLogger()
-    c = ''
+    asc = ''
     valid_moves = [1,2,4,8]
     init_map(40,20,w_map)
 
-    while c != 'q':
+    while asc != 'q':
         w_log.clear()
         qh.offset=1
         w_log.box()
-        c = int(chr(screen.getch()))
-        log.debug('key: %s'%c)
-        if c in valid_moves:
-            move(c,w_map)
+        key = (screen.getch())
+        if key in range(256):
+            asc = chr(key).lower()
         else:
-            log.error('bad key %c'%c)
+            asc = ''
+        log.debug('key: %d [%s]'%(key,asc))
+        # UP
+        if asc in ['w','i'] or key == 259:
+            move(1,w_map)
+        # DOWN
+        elif asc in ['s','k'] or key == 258:
+            move(4,w_map)
+        # LEFT
+        elif asc in ['a','j'] or key == 260:
+            move(8,w_map)
+        # RIGHT
+        elif asc in ['d','l'] or key == 261:
+            move(2,w_map)
+        else:
+            log.error('bad key %d'%key)
 
     curses.endwin()
 
