@@ -34,7 +34,8 @@ class VeefiveController(BaseController):
         y_max = avatar.y + view_radius
         paths = Session.query(Path).filter(sa.and_(
                     Path.x >= x_min, Path.x <= x_max,
-                    Path.y >= y_min, Path.y <= y_max
+                    Path.y >= y_min, Path.y <= y_max,
+                    sa.or_(Path.x == avatar.x, Path.y == avatar.y)
                 )).all()
         #visible = []
         # FIXME can still see through walls...
