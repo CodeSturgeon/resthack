@@ -24,7 +24,6 @@ def custom_encode(obj):
     except AttributeError:
         raise TypeError(repr(obj) + "Yuky JSON!")
 
-<<<<<<< HEAD
 def get_tiles():
     avatar = Session.query(Avatar).one()
     x_min = avatar.x - view_radius
@@ -59,17 +58,14 @@ def get_tiles():
 
     return visible
 
->>>>>>> 3cfc561be5de85c78f9b67222ae73bc46afc4742
 class VeefiveController(BaseController):
 
     def pos_get(self):
         avatar = Session.query(Avatar).one()
-<<<<<<< HEAD
 
         tiles = get_tiles()
 
         ret = {'tiles':tiles, 'avatar':avatar}
->>>>>>> 3cfc561be5de85c78f9b67222ae73bc46afc4742
         response.headers['Content-type'] = 'text/plain'
         return simplejson.dumps(ret, indent=2, default=custom_encode)
 
@@ -118,13 +114,11 @@ class VeefiveController(BaseController):
         avatar.x += shape_vector[move][0]
         avatar.y += shape_vector[move][1]
         Session.commit()
-<<<<<<< HEAD
 
         post_tiles = get_tiles()
 
         visible = [tile for tile in post_tiles if tile not in pre_tiles]
 
->>>>>>> 3cfc561be5de85c78f9b67222ae73bc46afc4742
         ret = {'tiles':visible, 'avatar':avatar}
         return simplejson.dumps(ret, indent=2, default=custom_encode)
 
