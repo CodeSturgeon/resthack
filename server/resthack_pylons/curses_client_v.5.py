@@ -73,6 +73,7 @@ def update_map(data,w_map,first_run=False,_cleared=[]):
         return
     for path in data['tiles']:
         w_map.addch(path['y']+1,path['x']+1,' ')
+<<<<<<< HEAD
         _cleared.append((path['x'],path['y']))
     for path in data['tiles']:
         shape = path['shape']
@@ -86,6 +87,17 @@ def update_map(data,w_map,first_run=False,_cleared=[]):
             w_map.addch(path['y']+1,path['x'], '@')
     if not first_run:
         w_map.addch(y+1,x+1,' ')
+=======
+        shape = path['shape']
+        if shape & 1:
+            w_map.addch(path['y'],path['x']+1, ' ')
+        if shape & 2:
+            w_map.addch(path['y']+1,path['x']+2, ' ')
+        if shape & 4:
+            w_map.addch(path['y']+2,path['x']+1, ' ')
+        if shape & 8:
+            w_map.addch(path['y']+1,path['x'], ' ')
+>>>>>>> 3cfc561be5de85c78f9b67222ae73bc46afc4742
     x = data['avatar']['x']
     y = data['avatar']['y']
     w_map.addch(y+1,x+1,'*')
