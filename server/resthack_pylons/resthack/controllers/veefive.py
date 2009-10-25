@@ -55,21 +55,23 @@ class VeefiveController(BaseController):
 
         lines = []
 
-        tenline = ['   ']
-        unitline = ['   ']
+        tenline = ['  *']
+        unitline = ['  *']
         for ten in range(0,40,10):
             tenline.append(str(ten)[0]*10)
             unitline.append(''.join(map(str,range(10))))
         lines.append(''.join(tenline))
         lines.append(''.join(unitline))
-        lines.append('')
+        lines.append('***'+'*'*40)
 
         for y in range(20):
             line = []
-            line.append('%02d '%y)
+            line.append('%02d*'%y)
             for x in range(40):
                 line.append(maze_tiles.get((x,y), '#'))
+            line.append('*')
             lines.append(''.join(line))
+        lines.append('***'+'*'*40)
         response.headers['Content-type'] = 'text/plain'
         return '\n'.join(lines)
 
