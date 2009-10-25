@@ -62,9 +62,9 @@ def init_map(x_max,y_max,w_map):
     url = 'http://localhost:5421/pos'
     resp = urllib2.urlopen(url).read()
     data = simplejson.loads(resp)
-    update_map(data,w_map)
+    update_map(data,w_map, first_run=True)
 
-def update_map(data,w_map,_cleared=[]):
+def update_map(data,w_map,first_run=False,_cleared=[]):
     global x,y
     log = get_log()
     log.debug('updating map')
@@ -84,7 +84,8 @@ def update_map(data,w_map,_cleared=[]):
             w_map.addch(path['y']+2,path['x']+1, '@')
         if shape & 8 and (path['x']-1,path['y']) not in _cleared:
             w_map.addch(path['y']+1,path['x'], '@')
-    w_map.addch(y+1,x+1,' ')
+    if not first_run:
+        w_map.addch(y+1,x+1,' ')
     x = data['avatar']['x']
     y = data['avatar']['y']
     w_map.addch(y+1,x+1,'*')
