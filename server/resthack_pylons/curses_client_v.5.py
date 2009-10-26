@@ -70,8 +70,9 @@ def update_map(data,w_map,first_run=False,_cleared=[],_static={}):
         log.warn(data['message'])
         return
 
-    # Clear any new tiles
+    # Clear and shade any tiles new to this session
     for path in data['tiles']:
+        # Check if tile was previously processed
         if path not in _cleared:
             w_map.addch(path['y']+1,path['x']+1,' ')
             _cleared.append((path['x'],path['y']))
@@ -87,25 +88,33 @@ def update_map(data,w_map,first_run=False,_cleared=[],_static={}):
             if shape & 8 and (path['x']-1,path['y']) not in _cleared:
                 w_map.addch(path['y']+1,path['x'], '@')
 
+    # Clear last location
     (x,y) = _static.get('last_location', (None, None))
     if x is not None:
         w_map.addch(y+1,x+1,' ')
 
+    # Remove others from last update
     for other in _static.get('others', []):
         w_map.addch(other['y']+1,other['x']+1,' ')
 
+    # Draw others from this update
     new_others = data['others']
     for other in new_others:
         w_map.addch(other['y']+1,other['x']+1,"'")
 
+    # Stash others for next update
     _static['others'] = new_others
 
+    # Draw avatar at new position and stash for next update
     x = data['avatar']['x']
     y = data['avatar']['y']
     w_map.addch(y+1,x+1,'*')
     _static['last_location'] = (x,y)
-    #w_map.move(y+1,x+1)
+
+    # Move cursor out of the way
     w_map.move(0,0)
+
+    # Show changes
     w_map.refresh()
 
 def main(screen):
