@@ -14,7 +14,7 @@ import sqlalchemy as sa
 import simplejson
 
 log = logging.getLogger(__name__)
-view_radius = 5 # Effective 9x9
+view_radius = 4 # Units distance you can see in any direction outside your 1x1
 shape_vector = {1: (0,-1), 4: (0,1), 8: (-1,0), 2: (1,0)}
 
 def custom_encode(obj):
@@ -46,7 +46,8 @@ def get_tiles():
         tiles[(path.x,path.y)] = path.get_shape()
 
     master_vectors = shape_vector.values()
-    for step in range(1,view_radius):
+    step = 1
+    while len(master_vectors) > 0:
         vectors = list(master_vectors)
         for v in vectors:
             qx = avatar.x + (v[0]*step)
@@ -55,6 +56,12 @@ def get_tiles():
                 visible.append({'x':qx,'y':qy,'shape':tiles[(qx,qy)]})
             else:
                 master_vectors.remove(v)
+        step += 1
+
+    # X-Ray vision debug - dumps all tiles
+    if 0:
+        visible = [{'x':tile[0],'y':tile[1],'shape':tiles[tile]}
+                    for tile in tiles]
 
     return visible
 
