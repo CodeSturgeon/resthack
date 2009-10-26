@@ -9,6 +9,7 @@ from inspect import getouterframes, currentframe
 w_log = ''
 avatar_id = 2
 pos_url = 'http://localhost:5421/avatars/%d/pos'%avatar_id
+log = logging.getLogger()
 
 class WindowHandler(logging.Handler):
     offset = 1
@@ -28,17 +29,7 @@ def config_log():
     logging.basicConfig()
     return wh
 
-def get_log(level=logging.DEBUG):
-    name_mod = __name__
-    name_caller = getouterframes(currentframe())[1][3]
-    if name_mod != '__main__':
-        name = '.'.join([name_mod, name_caller])
-    else:
-        name = name_caller
-    return logging.getLogger(name)
-
 def move(direction,w_map):
-    log = get_log()
     log.info('moving %s'%direction)
     params = urllib.urlencode(dict(move=direction))
     try:
@@ -52,7 +43,6 @@ def move(direction,w_map):
         log.warn(resp)
 
 def init_map(x_max,y_max,w_map):
-    log = get_log()
     log.debug('setting up map')
     for y in range(1,y_max+1):
         #print '#'*x_max
@@ -63,7 +53,6 @@ def init_map(x_max,y_max,w_map):
     update_map(data,w_map, first_run=True)
 
 def update_map(data,w_map,first_run=False,_cleared=[],_static={}):
-    log = get_log()
     log.debug('updating map')
     if data.has_key('code'):
         log.warn(data['message'])
