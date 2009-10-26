@@ -7,9 +7,7 @@ import logging
 from inspect import getouterframes, currentframe
 
 w_log = ''
-x = y = 10
-avatar_id = 1
-others = []
+avatar_id = 2
 pos_url = 'http://localhost:5421/avatars/%d/pos'%avatar_id
 
 class WindowHandler(logging.Handler):
@@ -65,8 +63,7 @@ def init_map(x_max,y_max,w_map):
     data = simplejson.loads(resp)
     update_map(data,w_map, first_run=True)
 
-def update_map(data,w_map,first_run=False,_cleared=[]):
-    global x,y,others
+def update_map(data,w_map,first_run=False,_cleared=[],_static={}):
     log = get_log()
     log.debug('updating map')
     if data.has_key('code'):
@@ -92,19 +89,23 @@ def update_map(data,w_map,first_run=False,_cleared=[]):
         if shape & 8 and (path['x']-1,path['y']) not in _cleared:
             w_map.addch(path['y']+1,path['x'], '@')
 
-    if not first_run:
+    (x,y) = _static.get('last_location', (None, None))
+    if x is not None:
         w_map.addch(y+1,x+1,' ')
 
-    for other in others:
+    for other in _static.get('others', []):
         w_map.addch(other['y']+1,other['x']+1,' ')
 
-    others = data['others']
-    for other in others:
+    new_others = data['others']
+    for other in new_others:
         w_map.addch(other['y']+1,other['x']+1,"'")
+
+    _static['others'] = new_others
 
     x = data['avatar']['x']
     y = data['avatar']['y']
     w_map.addch(y+1,x+1,'*')
+    _static['last_location'] = (x,y)
     #w_map.move(y+1,x+1)
     w_map.move(0,0)
     w_map.refresh()
