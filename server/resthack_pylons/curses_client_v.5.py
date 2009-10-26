@@ -122,9 +122,7 @@ def main(screen):
     screen.refresh()
 
     wh = config_log()
-    log = logging.getLogger()
     asc = ''
-    valid_moves = [1,2,4,8]
     init_map(40,20,w_map)
 
     while asc != 'q':
