@@ -14,7 +14,7 @@ import sqlalchemy as sa
 import simplejson
 
 log = logging.getLogger(__name__)
-view_radius = 5 # Effective 11x11
+view_radius = 5 # Effective 9x9
 shape_vector = {1: (0,-1), 4: (0,1), 8: (-1,0), 2: (1,0)}
 
 def custom_encode(obj):
@@ -121,9 +121,3 @@ class VeefiveController(BaseController):
 
         ret = {'tiles':visible, 'avatar':avatar}
         return simplejson.dumps(ret, indent=2, default=custom_encode)
-
-
-
-# Calculate Path diff
-# Query and return Path objs
-# x +/- (radius * move * 2) - (radius * move)
