@@ -21,13 +21,12 @@ class WindowHandler(logging.Handler):
 def config_log():
     root = logging.getLogger()
     root.setLevel(logging.DEBUG)
-    #qh = QueueingHandler()
-    qh = WindowHandler()
-    qh.setLevel(logging.DEBUG)
-    qh.setFormatter(logging.Formatter('%(asctime)s - %(message)s'))
-    root.addHandler(qh)
+    wh = WindowHandler()
+    wh.setLevel(logging.DEBUG)
+    wh.setFormatter(logging.Formatter('%(name)s - %(message)s'))
+    root.addHandler(wh)
     logging.basicConfig()
-    return qh
+    return wh
 
 def get_log(level=logging.DEBUG):
     name_mod = __name__
@@ -133,7 +132,7 @@ def main(screen):
 
     screen.refresh()
 
-    qh = config_log()
+    wh = config_log()
     log = logging.getLogger()
     asc = ''
     valid_moves = [1,2,4,8]
@@ -141,7 +140,7 @@ def main(screen):
 
     while asc != 'q':
         w_log.clear()
-        qh.offset=1
+        wh.offset=1
         w_log.box()
         key = (screen.getch())
         if key in range(256):
