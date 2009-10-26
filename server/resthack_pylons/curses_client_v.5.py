@@ -24,7 +24,7 @@ def config_log():
     root.setLevel(logging.DEBUG)
     wh = WindowHandler()
     wh.setLevel(logging.DEBUG)
-    wh.setFormatter(logging.Formatter('%(name)s - %(message)s'))
+    wh.setFormatter(logging.Formatter('%(message)s'))
     root.addHandler(wh)
     logging.basicConfig()
     return wh
