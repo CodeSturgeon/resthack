@@ -57,7 +57,7 @@ def init_map(x_max,y_max,w_map):
     log.debug('setting up map')
     for y in range(1,y_max+1):
         #print '#'*x_max
-        w_map.addstr(y,1,'#'*x_max)
+        w_map.addstr(y,1,'X'*x_max)
     w_map.refresh()
     url = 'http://localhost:5421/pos'
     resp = urllib2.urlopen(url).read()
