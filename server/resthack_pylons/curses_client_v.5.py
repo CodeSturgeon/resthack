@@ -76,18 +76,16 @@ def update_map(data,w_map,first_run=False,_cleared=[],_static={}):
             w_map.addch(path['y']+1,path['x']+1,' ')
             _cleared.append((path['x'],path['y']))
 
-    # FIXME fold in to above loop
-    # Do shading of known but not seen tiles
-    for path in data['tiles']:
-        shape = path['shape']
-        if shape & 1 and (path['x'],path['y']-1) not in _cleared:
-            w_map.addch(path['y'],path['x']+1, '@')
-        if shape & 2 and (path['x']+1,path['y']) not in _cleared:
-            w_map.addch(path['y']+1,path['x']+2, '@')
-        if shape & 4 and (path['x'],path['y']+1) not in _cleared:
-            w_map.addch(path['y']+2,path['x']+1, '@')
-        if shape & 8 and (path['x']-1,path['y']) not in _cleared:
-            w_map.addch(path['y']+1,path['x'], '@')
+            # Do shading of known but not seen tiles
+            shape = path['shape']
+            if shape & 1 and (path['x'],path['y']-1) not in _cleared:
+                w_map.addch(path['y'],path['x']+1, '@')
+            if shape & 2 and (path['x']+1,path['y']) not in _cleared:
+                w_map.addch(path['y']+1,path['x']+2, '@')
+            if shape & 4 and (path['x'],path['y']+1) not in _cleared:
+                w_map.addch(path['y']+2,path['x']+1, '@')
+            if shape & 8 and (path['x']-1,path['y']) not in _cleared:
+                w_map.addch(path['y']+1,path['x'], '@')
 
     (x,y) = _static.get('last_location', (None, None))
     if x is not None:
