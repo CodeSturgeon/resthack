@@ -29,7 +29,7 @@ def config_log():
     logging.basicConfig()
     return wh
 
-def move(direction,w_map):
+def move_avatar(direction,w_map):
     log.info('moving %s'%direction)
     params = urllib.urlencode(dict(move=direction))
     try:
@@ -137,16 +137,16 @@ def main(screen):
         log.debug('key: %d [%s]'%(key,asc))
         # UP
         if asc in ['w','i'] or key == 259:
-            move(1,w_map)
+            move_avatar(1,w_map)
         # DOWN
         elif asc in ['s','k'] or key == 258:
-            move(4,w_map)
+            move_avatar(4,w_map)
         # LEFT
         elif asc in ['a','j'] or key == 260:
-            move(8,w_map)
+            move_avatar(8,w_map)
         # RIGHT
         elif asc in ['d','l'] or key == 261:
-            move(2,w_map)
+            move_avatar(2,w_map)
         else:
             log.error('bad key %d'%key)
 
