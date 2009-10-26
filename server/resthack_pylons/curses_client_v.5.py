@@ -8,6 +8,9 @@ from inspect import getouterframes, currentframe
 
 w_log = ''
 x = y = 10
+avatar_id = 1
+others = []
+pos_url = 'http://localhost:5421/avatars/%d/pos'%avatar_id
 
 class WindowHandler(logging.Handler):
     offset = 1
@@ -41,9 +44,8 @@ def move(direction,w_map):
     log = get_log()
     log.info('moving %s'%direction)
     params = urllib.urlencode(dict(move=direction))
-    url = 'http://localhost:5421/pos'
     try:
-        resp = urllib2.urlopen(url, params)
+        resp = urllib2.urlopen(pos_url, params)
     except urllib2.HTTPError, e:
         resp = e
     try:
@@ -59,21 +61,26 @@ def init_map(x_max,y_max,w_map):
         #print '#'*x_max
         w_map.addstr(y,1,'X'*x_max)
     w_map.refresh()
-    url = 'http://localhost:5421/pos'
-    resp = urllib2.urlopen(url).read()
+    resp = urllib2.urlopen(pos_url).read()
     data = simplejson.loads(resp)
     update_map(data,w_map, first_run=True)
 
 def update_map(data,w_map,first_run=False,_cleared=[]):
-    global x,y
+    global x,y,others
     log = get_log()
     log.debug('updating map')
     if data.has_key('code'):
         log.warn(data['message'])
         return
+
+    # Clear any new tiles
     for path in data['tiles']:
-        w_map.addch(path['y']+1,path['x']+1,' ')
-        _cleared.append((path['x'],path['y']))
+        if path not in _cleared:
+            w_map.addch(path['y']+1,path['x']+1,' ')
+            _cleared.append((path['x'],path['y']))
+
+    # FIXME fold in to above loop
+    # Do shading of known but not seen tiles
     for path in data['tiles']:
         shape = path['shape']
         if shape & 1 and (path['x'],path['y']-1) not in _cleared:
@@ -84,8 +91,17 @@ def update_map(data,w_map,first_run=False,_cleared=[]):
             w_map.addch(path['y']+2,path['x']+1, '@')
         if shape & 8 and (path['x']-1,path['y']) not in _cleared:
             w_map.addch(path['y']+1,path['x'], '@')
+
     if not first_run:
         w_map.addch(y+1,x+1,' ')
+
+    for other in others:
+        w_map.addch(other['y']+1,other['x']+1,' ')
+
+    others = data['others']
+    for other in others:
+        w_map.addch(other['y']+1,other['x']+1,"'")
+
     x = data['avatar']['x']
     y = data['avatar']['y']
     w_map.addch(y+1,x+1,'*')

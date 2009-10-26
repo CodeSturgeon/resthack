@@ -27,9 +27,9 @@ def make_map():
 
     map.connect('/dump', controller='veefive', action='maze_dump',
                 conditions=dict(method=['GET', 'HEAD']))
-    map.connect('/pos', controller='veefive', action='pos_get',
+    map.connect('/avatars/{aid}/pos', controller='veefive', action='pos_get',
                 conditions=dict(method=['GET', 'HEAD']))
-    map.connect('/pos', controller='veefive', action='pos_post',
+    map.connect('/avatars/{aid}/pos', controller='veefive', action='pos_post',
                 conditions=dict(method=['POST']))
 
     map.connect('/{controller}/{action}')

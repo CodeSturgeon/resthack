@@ -24,27 +24,34 @@ def custom_encode(obj):
     except AttributeError:
         raise TypeError(repr(obj) + "Yuky JSON!")
 
-def get_tiles():
-    avatar = Session.query(Avatar).one()
+def get_tiles(avatar):
     x_min = avatar.x - view_radius
     x_max = avatar.x + view_radius
     y_min = avatar.y - view_radius
     y_max = avatar.y + view_radius
+
     paths = Session.query(Path).filter(sa.and_(
                 Path.x >= x_min, Path.x <= x_max,
                 Path.y >= y_min, Path.y <= y_max,
                 sa.or_(Path.x == avatar.x, Path.y == avatar.y)
             )).all()
 
-    visible = []
+    others = Session.query(Avatar).filter(sa.and_(
+                Avatar.id != avatar.id,
+                Avatar.x >= x_min, Avatar.x <= x_max,
+                Avatar.y >= y_min, Avatar.y <= y_max,
+                sa.or_(Avatar.x == avatar.x, Avatar.y == avatar.y)
+            )).all()
 
+
+
+    # Get all the Path objs -> {(x,y):shape}
     tiles = {}
     for path in paths:
-        if path.x == avatar.x and path.y == avatar.y:
-            visible.append({'x': path.x, 'y': path.y,
-                            'shape':path.get_shape()})
         tiles[(path.x,path.y)] = path.get_shape()
 
+    # Find all visible open spaces
+    visible_locations = []
     master_vectors = shape_vector.values()
     step = 1
     while len(master_vectors) > 0:
@@ -53,26 +60,36 @@ def get_tiles():
             qx = avatar.x + (v[0]*step)
             qy = avatar.y + (v[1]*step)
             if (qx,qy) in tiles:
-                visible.append({'x':qx,'y':qy,'shape':tiles[(qx,qy)]})
+                visible_locations.append((qx,qy))
             else:
                 master_vectors.remove(v)
         step += 1
 
+    # Check others to see if they are in a visible location
+    visible_others = []
+    for other in others:
+        if (other.x,other.y) in visible_locations:
+            visible_others.append(other)
+
+    # Get each visible location's tile
+    visible_tiles = [{'x':loc[0],'y':loc[1],'shape':tiles[(loc[0],loc[1])]}
+                        for loc in visible_locations+[(avatar.x,avatar.y)]]
+
     # X-Ray vision debug - dumps all tiles
     if 0:
-        visible = [{'x':tile[0],'y':tile[1],'shape':tiles[tile]}
+        visible_tiles = [{'x':tile[0],'y':tile[1],'shape':tiles[tile]}
                     for tile in tiles]
 
-    return visible
+    return visible_tiles, visible_others
 
 class VeefiveController(BaseController):
 
-    def pos_get(self):
-        avatar = Session.query(Avatar).one()
+    def pos_get(self, aid):
+        avatar = Session.query(Avatar).filter(Avatar.id==aid).one()
 
-        tiles = get_tiles()
+        tiles, others = get_tiles(avatar)
 
-        ret = {'tiles':tiles, 'avatar':avatar}
+        ret = {'tiles':tiles, 'avatar':avatar, 'others':others}
         response.headers['Content-type'] = 'text/plain'
         return simplejson.dumps(ret, indent=2, default=custom_encode)
 
@@ -105,26 +122,26 @@ class VeefiveController(BaseController):
         return '\n'.join(lines)
 
 
-    def pos_post(self):
+    def pos_post(self,aid):
         move = int(request.POST.get('move',0))
         log.debug('move: %s'%move)
         if move not in [1,2,4,8]:
             raise HTTPClientError('bad move')
-        avatar = Session.query(Avatar).one()
+        avatar = Session.query(Avatar).filter(Avatar.id==aid).one()
         current_path = Session.query(Path).filter(sa.and_(
                             Path.x == avatar.x, Path.y == avatar.y)).one()
         if not move & current_path.get_shape():
             raise HTTPClientError('cannot go that way')
 
-        pre_tiles = get_tiles()
+        pre_tiles = get_tiles(avatar)[0]
 
         avatar.x += shape_vector[move][0]
         avatar.y += shape_vector[move][1]
         Session.commit()
 
-        post_tiles = get_tiles()
+        post_tiles, others = get_tiles(avatar)
 
         visible = [tile for tile in post_tiles if tile not in pre_tiles]
 
-        ret = {'tiles':visible, 'avatar':avatar}
+        ret = {'tiles':visible, 'avatar':avatar, 'others':others}
         return simplejson.dumps(ret, indent=2, default=custom_encode)
