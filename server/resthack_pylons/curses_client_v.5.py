@@ -4,11 +4,12 @@ import simplejson
 import urllib2, urllib
 
 import logging
-from inspect import getouterframes, currentframe
+from optparse import OptionParser
 
 w_log = ''
 avatar_id = 2
-pos_url = 'http://localhost:5421/avatars/%d/pos'%avatar_id
+opts = ''
+pos_url = ''
 log = logging.getLogger()
 
 class WindowHandler(logging.Handler):
@@ -45,12 +46,26 @@ def move_avatar(direction,w_map):
 def init_map(x_max,y_max,w_map):
     log.debug('setting up map')
     for y in range(1,y_max+1):
-        #print '#'*x_max
-        w_map.addstr(y,1,'X'*x_max)
+        w_map.addstr(y,1,opts.wall_char*x_max)
     w_map.refresh()
     resp = urllib2.urlopen(pos_url).read()
     data = simplejson.loads(resp)
     update_map(data,w_map, first_run=True)
+
+def get_options():
+    parser = OptionParser()
+    parser.add_option('-a', '--avatar-id', help='ID of avatar to use',
+                        type='int', default=1)
+    parser.add_option('-c', '--avatar-char', help='Char to use for avatar',
+                        default='*')
+    parser.add_option('-w', '--wall-char', help='Char to use for walls',
+                        default='X')
+    parser.add_option('-s', '--shade-char', help='Char to use for walls',
+                        default='@')
+    parser.add_option('-o', '--other-char', help='Char to use for others',
+                        default="'")
+    options, args = parser.parse_args()
+    return options
 
 def update_map(data,w_map,first_run=False,_cleared=[],_static={}):
     log.debug('updating map')
@@ -68,13 +83,13 @@ def update_map(data,w_map,first_run=False,_cleared=[],_static={}):
             # Do shading of known but not seen tiles
             shape = path['shape']
             if shape & 1 and (path['x'],path['y']-1) not in _cleared:
-                w_map.addch(path['y'],path['x']+1, '@')
+                w_map.addch(path['y'],path['x']+1, opts.shade_char)
             if shape & 2 and (path['x']+1,path['y']) not in _cleared:
-                w_map.addch(path['y']+1,path['x']+2, '@')
+                w_map.addch(path['y']+1,path['x']+2, opts.shade_char)
             if shape & 4 and (path['x'],path['y']+1) not in _cleared:
-                w_map.addch(path['y']+2,path['x']+1, '@')
+                w_map.addch(path['y']+2,path['x']+1, opts.shade_char)
             if shape & 8 and (path['x']-1,path['y']) not in _cleared:
-                w_map.addch(path['y']+1,path['x'], '@')
+                w_map.addch(path['y']+1,path['x'], opts.shade_char)
 
     # Clear last location
     (x,y) = _static.get('last_location', (None, None))
@@ -88,7 +103,7 @@ def update_map(data,w_map,first_run=False,_cleared=[],_static={}):
     # Draw others from this update
     new_others = data['others']
     for other in new_others:
-        w_map.addch(other['y']+1,other['x']+1,"'")
+        w_map.addch(other['y']+1,other['x']+1,opts.other_char)
 
     # Stash others for next update
     _static['others'] = new_others
@@ -96,7 +111,7 @@ def update_map(data,w_map,first_run=False,_cleared=[],_static={}):
     # Draw avatar at new position and stash for next update
     x = data['avatar']['x']
     y = data['avatar']['y']
-    w_map.addch(y+1,x+1,'*')
+    w_map.addch(y+1,x+1,opts.avatar_char)
     _static['last_location'] = (x,y)
 
     # Move cursor out of the way
@@ -106,7 +121,10 @@ def update_map(data,w_map,first_run=False,_cleared=[],_static={}):
     w_map.refresh()
 
 def main(screen):
-    global w_log
+    global w_log, opts, pos_url
+    opts = get_options()
+    pos_url = 'http://localhost:5421/avatars/%d/pos'%opts.avatar_id
+
     log_lines = 10
     w_width = curses.COLS-2
     w_height = curses.LINES-4-log_lines
