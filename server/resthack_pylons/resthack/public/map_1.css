@@ -1,0 +1,17 @@
+td.wall {
+	background-color: #960082;
+}
+td.clear {
+	background-color: #1500ff;
+}
+td {
+	width: 20px;
+	height: 20px;
+	text-align: center;
+}
+th.top {
+	border-bottom: 1px solid black;
+}
+table {
+	border-collapse: collapse;
+}
