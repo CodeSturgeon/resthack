@@ -1,8 +1,12 @@
 td.wall {
-	background-color: #960082;
+	background-color: #4c4c4c;
 }
 td.clear {
-	background-color: #1500ff;
+	background-color: #999;
+}
+
+tr.top {
+	background-color: #007eff;
 }
 td {
 	width: 20px;
