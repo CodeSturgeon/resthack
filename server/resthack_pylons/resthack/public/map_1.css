@@ -1,21 +1,29 @@
 td.wall {
 	background-color: #4c4c4c;
 }
-td.clear {
-	background-color: #999;
+
+td.shade {
+	background-color: #808080;
 }
 
-tr.top {
-	background-color: #007eff;
+td.clear {
+	background-color: #b3b3b3;
 }
 td {
 	width: 20px;
 	height: 20px;
 	text-align: center;
 }
-th.top {
-	border-bottom: 1px solid black;
+th {
+	border-width: 1px;
+	border-style: solid;
+	line-height: .85em;
 }
-table {
+table#placeholder {
 	border-collapse: collapse;
+	margin: auto;
+}
+
+div#buttons {
+	text-align: center;
 }

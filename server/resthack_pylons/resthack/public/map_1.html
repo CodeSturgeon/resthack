@@ -15,15 +15,26 @@
         <tr><th>123</th><td class='clear'></td><td class='cell'></td><td class='cell'></td></tr>
     </table>
 -->
-    <table id='placeholder'>
-    </table>
+    <table id='placeholder'> </table>
+
+    <div id='buttons'>
+        <button id='up' value='1'>^</button><br/>
+        <button id='left' value='8'>&lt;</button>
+        <button id='down' value='4'>v</button>
+        <button id='right' value='2'>&gt;</button>
+    </div>
 </body>
 <script type='text/javascript'>
     var x_max = 40;
     var y_max = 20;
+    var avatar_id = 1;
+    var base_url = 'http://localhost:5421';
+    var pos_url = base_url+'/avatars/'+avatar_id+'/pos';
     jQuery(document).ready(function(){
         make_maze();
-        jQuery('#20-1')[0].className = 'clear';
+        jQuery.get(pos_url,{},handle_update,'json');
     })
+    jQuery('button').click(move_element_clicker);
+    jQuery(window).keyup(key_handler);
 </script>
 </html>
