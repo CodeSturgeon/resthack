@@ -3,64 +3,27 @@
     <link rel='stylesheet' type-'text/css' href='map_1.css' />
     <script type='text/javascript'
             src='http://localhost/~fish/jquery-1.3.2.js'></script>
+    <script type='text/javascript' src='map_1.js'></script>
     <title>Map 1</title>
 </head>
 <body>
+<!--
     <table>
-        <tr><td></td><th class='top'>1<br/>2</th><th class='top'>1<br>/3</th><th>1<br/>4</th></tr>
+        <tr><td></td><th class='top'>1<br/>2</th><th class='top'>1<br/>3</th><th>1<br/>4</th></tr>
         <tr><th>123</th><td class='wall'>X</td><td class='cell'></td><td class='cell'></td></tr>
         <tr><th>123</th><td class='cell'></td><td class='clear'></td><td class='cell'></td></tr>
         <tr><th>123</th><td class='clear'></td><td class='cell'></td><td class='cell'></td></tr>
     </table>
-    <table>
-    <tbody id='t2'></tbody>
+-->
+    <table id='placeholder'>
     </table>
 </body>
 <script type='text/javascript'>
     var x_max = 40;
     var y_max = 20;
     jQuery(document).ready(function(){
-        var tab = jQuery('#t2')[0];
-
-        var num_row = document.createElement('tr');
-        num_row.appendChild(document.createElement('td'));
-        for(lop=0;lop<x_max;lop++){
-            var new_cell = document.createElement('th');
-            var num = lop.toString(10);
-            if(num.length == 1){
-                new_cell.appendChild(document.createTextNode(' '));
-                new_cell.appendChild(document.createElement('br'));
-                new_cell.appendChild(document.createTextNode((lop+'')[0]));
-            } else {
-                new_cell.appendChild(document.createTextNode(num[0]));
-                new_cell.appendChild(document.createElement('br'));
-                new_cell.appendChild(document.createTextNode(num[1]));
-            }
-            num_row.appendChild(new_cell);
-        }
-        num_row.appendChild(document.createElement('td'));
-        
-        // Head row
-        tab.appendChild(num_row);
-
-        for(lop=0;lop<y_max;lop++){
-            var body_row = document.createElement('tr');
-            var num_cell = document.createElement('th');
-            num_cell.appendChild(document.createTextNode(lop.toString(10)));
-            body_row.appendChild(num_cell);
-            for(lop2=0;lop2<x_max;lop2++){
-                var new_cell = document.createElement('td');
-                new_cell.className = 'wall';
-                new_cell.id = lop2+'-'+lop;
-                new_cell.appendChild(document.createTextNode(' '));
-                body_row.appendChild(new_cell);
-            }
-            body_row.appendChild(num_cell.cloneNode(true));
-            tab.appendChild(body_row);
-        }
-
-        // Foot row
-        tab.appendChild(num_row.cloneNode(true));
+        make_maze();
+        jQuery('#20-1')[0].className = 'clear';
     })
 </script>
 </html>
