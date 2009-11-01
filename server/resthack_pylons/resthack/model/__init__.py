@@ -12,15 +12,16 @@ def init_model(engine):
     meta.Session.configure(bind=engine)
     meta.engine = engine
 
-# v.1
 class Map(_Base):
     __tablename__ = 'maps'
     id = sa.Column(sa.types.Integer, primary_key=True)
-    name = sa.Column(sa.types.String(5), nullable=False)
-    x_min = sa.Column(sa.types.Integer, nullable=False)
-    x_max = sa.Column(sa.types.Integer, nullable=False)
-    y_min = sa.Column(sa.types.Integer, nullable=False)
-    y_max = sa.Column(sa.types.Integer, nullable=False)
+    name = sa.Column(sa.types.String(10), nullable=False)
+    width = sa.Column(sa.types.Integer, nullable=False)
+    height = sa.Column(sa.types.Integer, nullable=False)
+    def __repr__(self):
+        return '<Map %d (%d,%d)>'%(self.name,self.width,self.height)
+    def serial(self):
+        return {'name':self.name,'width':self.width,'height':self.height}
 
 class Tile(_Base):
     __tablename__ = 'tiles'
@@ -29,56 +30,23 @@ class Tile(_Base):
                         nullable=False)
     x = sa.Column(sa.types.Integer, nullable=False)
     y = sa.Column(sa.types.Integer, nullable=False)
-    type = sa.Column(sa.types.String(5), nullable=False)
+    shape = sa.Column(sa.types.Integer, nullable=False)
     map = orm.relation(Map, backref=orm.backref('tiles', order_by=x))
-
-# v.2
-class Thing(_Base):
-    __tablename__ = 'things'
-    id = sa.Column(sa.types.Integer, primary_key=True)
-    x = sa.Column(sa.types.Integer, nullable=False)
-    y = sa.Column(sa.types.Integer, nullable=False)
-    type = sa.Column(sa.types.String(6), nullable=False)
     def __repr__(self):
-        return '<Thing %s (%d,%d)>'%(self.type,self.x,self.y)
-
-# v.3
-class Path(_Base):
-    __tablename__ = 'paths'
-    id = sa.Column(sa.types.Integer, primary_key=True)
-    x = sa.Column(sa.types.Integer, nullable=False)
-    y = sa.Column(sa.types.Integer, nullable=False)
-    u = sa.Column(sa.types.Boolean, default=False, nullable=False)
-    d = sa.Column(sa.types.Boolean, default=False, nullable=False)
-    l = sa.Column(sa.types.Boolean, default=False, nullable=False)
-    r = sa.Column(sa.types.Boolean, default=False, nullable=False)
-    def exit_list(self):
-        exits = []
-        for e in ['u','d','l','r']:
-            if getattr(self, e):
-                exits.append(e)
-        return exits
-    def get_shape(self):
-        shape = 0
-        if self.u: shape += 1
-        if self.r: shape += 2
-        if self.d: shape += 4
-        if self.l: shape += 8
-        return shape
-    def __repr__(self):
-        return '<Path (%s,%s)%s>'%(self.x,self.y,self.exit_list())
+        return '<Tile %d (%d,%d-%d)>'%(self.map.name,self.x,self.y,self.shape)
     def serial(self):
-        # v3 spec
-        # return {'x':self.x,'y':self.y,'exits':self.exit_list()}
-        # Quick hack to implement v5
-        return {'x':self.x,'y':self.y,'shape': self.get_shape()}
+        return {'x':self.x,'y':self.y,'shape':self.shape}
 
 class Avatar(_Base):
     __tablename__ = 'avatars'
     id = sa.Column(sa.types.Integer, primary_key=True)
+    name = sa.Column(sa.types.String(10), nullable=False)
     x = sa.Column(sa.types.Integer, nullable=False)
     y = sa.Column(sa.types.Integer, nullable=False)
+    map_id = sa.Column(sa.types.Integer, sa.ForeignKey('maps.id'),
+                        nullable=False)
+    map = orm.relation(Map, backref=orm.backref('tiles', order_by=name))
     def __repr__(self):
         return '<Avatar %d (%d,%d)>'%(self.id,self.x,self.y)
     def serial(self):
-        return {'x':self.x,'y':self.y}
+        return {'name':self.name,'x':self.x,'y':self.y}
