@@ -8,7 +8,6 @@ import logging
 from optparse import OptionParser
 
 w_log = ''
-avatar_id = 2
 opts = ''
 pos_url = ''
 log = logging.getLogger()
@@ -55,8 +54,8 @@ def init_map(x_max,y_max,w_map):
 
 def get_options():
     parser = OptionParser()
-    parser.add_option('-a', '--avatar-id', help='ID of avatar to use',
-                        type='int', default=1)
+    parser.add_option('-a', '--avatar-name', help='Name of avatar to use',
+                        default='jack')
     parser.add_option('-c', '--avatar-char', help='Char to use for avatar',
                         default='*')
     parser.add_option('-w', '--wall-char', help='Char to use for walls',
@@ -123,8 +122,7 @@ def update_map(data,w_map,first_run=False,_cleared=[],_static={}):
 
 def main(screen):
     global w_log, opts, pos_url
-    opts = get_options()
-    pos_url = 'http://localhost:5421/avatars/%d/pos'%opts.avatar_id
+    pos_url = 'http://localhost:5421/avatars/%s'%opts.avatar_id
 
     log_lines = 10
     w_width = curses.COLS-2
@@ -171,4 +169,5 @@ def main(screen):
 
     curses.endwin()
 
+opts = get_options()
 curses.wrapper(main)
