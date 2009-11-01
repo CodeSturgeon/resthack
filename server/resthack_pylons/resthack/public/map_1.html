@@ -27,9 +27,9 @@
 <script type='text/javascript'>
     var x_max = 40;
     var y_max = 20;
-    var avatar_id = 1;
+    var avatar_name = 'jack';
     var base_url = 'http://localhost:5421';
-    var pos_url = base_url+'/avatars/'+avatar_id+'/pos';
+    var pos_url = base_url+'/avatars/'+avatar_name;
     jQuery(document).ready(function(){
         make_maze();
         jQuery.get(pos_url,{},handle_update,'json');
