@@ -15,7 +15,7 @@ def init_model(engine):
 class Map(_Base):
     __tablename__ = 'maps'
     id = sa.Column(sa.types.Integer, primary_key=True)
-    name = sa.Column(sa.types.String(10), nullable=False)
+    name = sa.Column(sa.types.String(10), nullable=False, unique=True)
     width = sa.Column(sa.types.Integer, nullable=False)
     height = sa.Column(sa.types.Integer, nullable=False)
     def __repr__(self):
@@ -40,7 +40,7 @@ class Tile(_Base):
 class Avatar(_Base):
     __tablename__ = 'avatars'
     id = sa.Column(sa.types.Integer, primary_key=True)
-    name = sa.Column(sa.types.String(10), nullable=False)
+    name = sa.Column(sa.types.String(10), nullable=False, unique=True)
     x = sa.Column(sa.types.Integer, nullable=False)
     y = sa.Column(sa.types.Integer, nullable=False)
     map_id = sa.Column(sa.types.Integer, sa.ForeignKey('maps.id'),
