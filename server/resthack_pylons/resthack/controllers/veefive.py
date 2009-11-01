@@ -5,7 +5,8 @@ from pylons.controllers.util import abort, redirect_to
 
 from resthack.lib.base import BaseController, render
 
-from resthack.model import Path, Avatar
+from resthack.model import Tile, Avatar
+from resthack.model import Map as Mapo
 from resthack.model.meta import Session
 
 from webob.exc import HTTPClientError
@@ -30,25 +31,25 @@ def get_tiles(avatar):
     y_min = avatar.y - view_radius
     y_max = avatar.y + view_radius
 
-    paths = Session.query(Path).filter(sa.and_(
-                Path.x >= x_min, Path.x <= x_max,
-                Path.y >= y_min, Path.y <= y_max,
-                sa.or_(Path.x == avatar.x, Path.y == avatar.y)
+    paths = Session.query(Tile).filter(sa.and_(
+                Tile.map_id == avatar.map_id,
+                Tile.x >= x_min, Tile.x <= x_max,
+                Tile.y >= y_min, Tile.y <= y_max,
+                sa.or_(Tile.x == avatar.x, Tile.y == avatar.y)
             )).all()
 
     others = Session.query(Avatar).filter(sa.and_(
                 Avatar.id != avatar.id,
+                Avatar.map_id == avatar.map_id,
                 Avatar.x >= x_min, Avatar.x <= x_max,
                 Avatar.y >= y_min, Avatar.y <= y_max,
                 sa.or_(Avatar.x == avatar.x, Avatar.y == avatar.y)
             )).all()
 
-
-
-    # Get all the Path objs -> {(x,y):shape}
+    # Get all the Tile objs -> {(x,y):shape}
     tiles = {}
     for path in paths:
-        tiles[(path.x,path.y)] = path.get_shape()
+        tiles[(path.x,path.y)] = path.shape
 
     # Find all visible open spaces
     visible_locations = []
@@ -85,16 +86,18 @@ def get_tiles(avatar):
 class VeefiveController(BaseController):
 
     def pos_get(self, aid):
-        avatar = Session.query(Avatar).filter(Avatar.id==aid).one()
+        avatar = Session.query(Avatar).filter(Avatar.name==aid).one()
 
         tiles, others = get_tiles(avatar)
 
-        ret = {'tiles':tiles, 'avatar':avatar, 'others':others}
+        ret = {'tiles':tiles, 'avatar':avatar, 'others':others,
+                'map':avatar.map}
         response.headers['Content-type'] = 'text/plain'
         return simplejson.dumps(ret, indent=2, default=custom_encode)
 
-    def maze_dump(self):
-        paths = Session.query(Path).all()
+    def maze_dump(self, map_name):
+        maze = Session.query(Mapo).filter(Mapo.name==map_name).one()
+        paths = Session.query(Tile).filter(Tile.map==maze).all()
         maze_tiles = {}
         for path in paths:
             maze_tiles[(path.x, path.y)] = ' ' # hex(path.get_shape())[-1].upper()
@@ -117,7 +120,7 @@ class VeefiveController(BaseController):
                 line.append(maze_tiles.get((x,y), '#'))
             line.append('*')
             lines.append(''.join(line))
-        lines.append('***'+'*'*40)
+        lines.append('   '+'*'*40)
         response.headers['Content-type'] = 'text/plain'
         return '\n'.join(lines)
 
@@ -127,10 +130,11 @@ class VeefiveController(BaseController):
         log.debug('move: %s'%move)
         if move not in [1,2,4,8]:
             raise HTTPClientError('bad move')
-        avatar = Session.query(Avatar).filter(Avatar.id==aid).one()
-        current_path = Session.query(Path).filter(sa.and_(
-                            Path.x == avatar.x, Path.y == avatar.y)).one()
-        if not move & current_path.get_shape():
+        avatar = Session.query(Avatar).filter(Avatar.name==aid).one()
+        current_path = Session.query(Tile).filter(sa.and_(
+                            Tile.map == avatar.map,
+                            Tile.x == avatar.x, Tile.y == avatar.y)).one()
+        if not move & current_path.shape:
             raise HTTPClientError('cannot go that way')
 
         pre_tiles = get_tiles(avatar)[0]
@@ -143,5 +147,6 @@ class VeefiveController(BaseController):
 
         visible = [tile for tile in post_tiles if tile not in pre_tiles]
 
-        ret = {'tiles':visible, 'avatar':avatar, 'others':others}
+        ret = {'tiles':visible, 'avatar':avatar, 'others':others,
+                'map':avatar.map}
         return simplejson.dumps(ret, indent=2, default=custom_encode)
