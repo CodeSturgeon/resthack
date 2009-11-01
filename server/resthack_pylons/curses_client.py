@@ -122,7 +122,7 @@ def update_map(data,w_map,first_run=False,_cleared=[],_static={}):
 
 def main(screen):
     global w_log, opts, pos_url
-    pos_url = 'http://localhost:5421/avatars/%s'%opts.avatar_id
+    pos_url = 'http://localhost:5421/avatars/%s'%opts.avatar_name
 
     log_lines = 10
     w_width = curses.COLS-2
