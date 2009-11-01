@@ -45,7 +45,7 @@ class Avatar(_Base):
     y = sa.Column(sa.types.Integer, nullable=False)
     map_id = sa.Column(sa.types.Integer, sa.ForeignKey('maps.id'),
                         nullable=False)
-    map = orm.relation(Map, backref=orm.backref('tiles', order_by=name))
+    map = orm.relation(Map, backref=orm.backref('avatars', order_by=name))
     def __repr__(self):
         return '<Avatar %d (%d,%d)>'%(self.id,self.x,self.y)
     def serial(self):
