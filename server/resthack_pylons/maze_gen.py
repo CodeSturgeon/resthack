@@ -5,7 +5,7 @@ if live:
     from paste.deploy import appconfig
     from pylons import config
 
-    from resthack.model import Path
+    from resthack.model import Tile, Map
     from resthack.model.meta import Session
 
     from resthack.config.environment import load_environment
@@ -88,19 +88,17 @@ while 1:
         x,y=random.choice(open)
 
 if live:
-    # make path objects and store them
+    # make map
+    map = Map(name='rag',width=x_max,height=y_max)
+    # make tile objects and store them
+
     for x,y in cleared:
-        p = Path(x=x,y=y)
         shape = 0
         if (x,y-1) in cleared: shape += 1
         if (x+1,y) in cleared: shape += 2
         if (x,y+1) in cleared: shape += 4
         if (x-1,y) in cleared: shape += 8
-        if (x+1,y) in cleared: p.r = True
-        if (x-1,y) in cleared: p.l = True
-        if (x,y-1) in cleared: p.u = True
-        if (x,y+1) in cleared: p.d = True
-        Session.add(p)
+        Session.add(Tile(x=x, y=y, shape=shape, map=map))
     Session.commit()
 
 dump_maze()
