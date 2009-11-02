@@ -31,7 +31,7 @@
     var base_url = 'http://localhost:5421';
     var pos_url = base_url+'/avatars/'+avatar_name;
     jQuery(document).ready(function(){
-        make_maze();
+        make_maze(x_max,y_max);
         jQuery.get(pos_url,{},handle_update,'json');
     })
     jQuery('button').click(move_element_clicker);
