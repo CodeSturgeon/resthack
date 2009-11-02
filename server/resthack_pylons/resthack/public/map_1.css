@@ -17,6 +17,8 @@ td {
 th {
 	border-width: 1px;
 	border-style: solid;
+}
+th.ddiget {
 	line-height: .85em;
 }
 table#placeholder {

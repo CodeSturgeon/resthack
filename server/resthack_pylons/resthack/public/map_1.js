@@ -9,6 +9,7 @@ var make_maze = function(){
         if(num.length == 1){
             new_cell.appendChild(document.createTextNode((lop+'')[0]));
         } else {
+            new_cell.className = 'ddiget';
             new_cell.appendChild(document.createTextNode(num[0]));
             new_cell.appendChild(document.createElement('br'));
             new_cell.appendChild(document.createTextNode(num[1]));
