@@ -72,27 +72,31 @@ var clear_tiles = function(tiles){
     }
 };
 
-var paint_mover = function(){
-    var movers = new Object();
-    return function(x,y,name){
-        if(movers[name] != undefined){
-            var selector = '#'+movers[name].x+'-'+movers[name].y;
-            jQuery(selector).attr('class','clear');
+var paint_mover = function(x,y,name){
+    var selector = '#'+x+'-'+y;
+    jQuery(selector).attr('class',name);
+};
+
+var handle_update = function(){
+    var last_run = new Object();
+    return function(json){
+        if(last_run.json!=undefined){
+            var avatar = last_run.json.avatar;
+            paint_mover(avatar.x, avatar.y, 'clear');
+            for(other_no in last_run.json.others){
+                var other = last_run.json.others[other_no];
+                paint_mover(other.x,other.y,'clear');
+            }
         }
-        var selector = '#'+x+'-'+y;
-        jQuery(selector).attr('class','avatar');
-        movers[name] = {x:x,y:y};
+        clear_tiles(json.tiles);
+        paint_mover(json.avatar.x, json.avatar.y, 'avatar');
+        for(other_no in json.others){
+            var other = json.others[other_no];
+            paint_mover(other.x,other.y,'other');
+        }
+        last_run.json = json;
     }
 }();
-
-var handle_update = function(json){
-    clear_tiles(json.tiles);
-    paint_mover(json.avatar.x, json.avatar.y, 'X');
-    for(other_no in json.others){
-        other = json.others[other_no];
-        paint_mover(other.x,other.y,'O');
-    }
-};
 
 var move_element_clicker = function(event){ move_avatar(event.target.value); };
 
