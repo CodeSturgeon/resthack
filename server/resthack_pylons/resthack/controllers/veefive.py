@@ -95,7 +95,7 @@ class VeefiveController(BaseController):
         response.headers['Content-type'] = 'text/plain'
         return simplejson.dumps(ret, indent=2, default=custom_encode)
 
-    def maze_dump(self, maze_name):
+    def ascii_dump(self, maze_name):
         maze = Session.query(Maze).filter(Maze.name==maze_name).one()
         paths = Session.query(Tile).filter(Tile.maze==maze).all()
         maze_tiles = {}
@@ -123,7 +123,6 @@ class VeefiveController(BaseController):
         lines.append('   '+'*'*40)
         response.headers['Content-type'] = 'text/plain'
         return '\n'.join(lines)
-
 
     def pos_post(self,aid):
         move = int(request.POST.get('move',0))
