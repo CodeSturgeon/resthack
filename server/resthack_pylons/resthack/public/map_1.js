@@ -89,8 +89,12 @@ var paint_movers = function(json,cls){
 };
 
 var handle_update = function(){
-    var last_run = new Object();
+    var last_run = 'first_run';
     return function(json){
+        if(last_run=='first_run'){
+            make_maze(json.maze.width, json.maze.height);
+        }
+
         clear_tiles(json.tiles);
 
         paint_movers(last_run,'clear');
