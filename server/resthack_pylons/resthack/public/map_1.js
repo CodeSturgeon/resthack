@@ -72,29 +72,30 @@ var clear_tiles = function(tiles){
     }
 };
 
-var paint_mover = function(x,y,name){
-    var selector = '#'+x+'-'+y;
-    jQuery(selector).attr('class',name);
+var paint_movers = function(json,cls){
+    if(json.avatar){
+        if(!cls){cls='avatar'};
+        var selector = '#'+json.avatar.x+'-'+json.avatar.y;
+        jQuery(selector).attr('class',cls);
+    }
+    if(json.others){
+        if(cls=='avatar'){cls='other'};
+        for(other_no in json.others){
+            var other = json.others[other_no];
+            var selector = '#'+other.x+'-'+other.y;
+            jQuery(selector).attr('class',cls);
+        }
+    }
 };
 
 var handle_update = function(){
     var last_run = new Object();
     return function(json){
-        if(last_run.json!=undefined){
-            var avatar = last_run.json.avatar;
-            paint_mover(avatar.x, avatar.y, 'clear');
-            for(other_no in last_run.json.others){
-                var other = last_run.json.others[other_no];
-                paint_mover(other.x,other.y,'clear');
-            }
-        }
         clear_tiles(json.tiles);
-        paint_mover(json.avatar.x, json.avatar.y, 'avatar');
-        for(other_no in json.others){
-            var other = json.others[other_no];
-            paint_mover(other.x,other.y,'other');
-        }
-        last_run.json = json;
+
+        paint_movers(last_run,'clear');
+        paint_movers(json);
+        last_run = json;
     }
 }();
 

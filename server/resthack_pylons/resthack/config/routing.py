@@ -22,6 +22,8 @@ def make_map():
 
     map.connect('/mazes/{maze_name}/ascii', controller='veefive',
                 action='ascii_dump', conditions=dict(method=['GET', 'HEAD']))
+    map.connect('/mazes/{maze_name}/json', controller='veefive',
+                action='json_dump', conditions=dict(method=['GET', 'HEAD']))
     map.connect('/avatars/{aid}', controller='veefive', action='pos_get',
                 conditions=dict(method=['GET', 'HEAD']))
     map.connect('/avatars/{aid}', controller='veefive', action='pos_post',

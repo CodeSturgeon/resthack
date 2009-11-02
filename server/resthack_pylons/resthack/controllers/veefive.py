@@ -95,6 +95,16 @@ class VeefiveController(BaseController):
         response.headers['Content-type'] = 'text/plain'
         return simplejson.dumps(ret, indent=2, default=custom_encode)
 
+    def json_dump(self, maze_name):
+        maze = Session.query(Maze).filter(Maze.name==maze_name).one()
+        tiles = Session.query(Tile).filter(Tile.maze==maze).all()
+
+        others = Session.query(Avatar).filter(Avatar.maze==maze).all()
+
+        ret = {'tiles':tiles, 'others':others, 'maze':maze}
+        response.headers['Content-type'] = 'text/plain'
+        return simplejson.dumps(ret, indent=2, default=custom_encode)
+
     def ascii_dump(self, maze_name):
         maze = Session.query(Maze).filter(Maze.name==maze_name).one()
         paths = Session.query(Tile).filter(Tile.maze==maze).all()
