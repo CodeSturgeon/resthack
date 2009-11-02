@@ -80,7 +80,7 @@ def save(name, width, height, cleared):
     from paste.deploy import appconfig
     from pylons import config
 
-    from resthack.model import Tile, Map
+    from resthack.model import Tile, Maze
     from resthack.model.meta import Session
 
     from resthack.config.environment import load_environment
@@ -88,8 +88,8 @@ def save(name, width, height, cleared):
     conf = appconfig('config:development.ini', relative_to='.')
     load_environment(conf.global_conf, conf.local_conf)
 
-    # make map
-    map = Map(name=name,width=width,height=height)
+    # make maze
+    maze = Maze(name=name,width=width,height=height)
     # make tile objects and store them
 
     for x,y in cleared:
@@ -98,7 +98,7 @@ def save(name, width, height, cleared):
         if (x+1,y) in cleared: shape += 2
         if (x,y+1) in cleared: shape += 4
         if (x-1,y) in cleared: shape += 8
-        Session.add(Tile(x=x, y=y, shape=shape, map=map))
+        Session.add(Tile(x=x, y=y, shape=shape, maze=maze))
     Session.commit()
 
 def get_options():

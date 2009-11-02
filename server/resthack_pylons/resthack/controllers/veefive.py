@@ -6,7 +6,7 @@ from pylons.controllers.util import abort, redirect_to
 from resthack.lib.base import BaseController, render
 
 from resthack.model import Tile, Avatar
-from resthack.model import Map as Mapo
+from resthack.model import Maze
 from resthack.model.meta import Session
 
 from webob.exc import HTTPClientError
@@ -32,7 +32,7 @@ def get_tiles(avatar):
     y_max = avatar.y + view_radius
 
     paths = Session.query(Tile).filter(sa.and_(
-                Tile.map_id == avatar.map_id,
+                Tile.maze_id == avatar.maze_id,
                 Tile.x >= x_min, Tile.x <= x_max,
                 Tile.y >= y_min, Tile.y <= y_max,
                 sa.or_(Tile.x == avatar.x, Tile.y == avatar.y)
@@ -40,7 +40,7 @@ def get_tiles(avatar):
 
     others = Session.query(Avatar).filter(sa.and_(
                 Avatar.id != avatar.id,
-                Avatar.map_id == avatar.map_id,
+                Avatar.maze_id == avatar.maze_id,
                 Avatar.x >= x_min, Avatar.x <= x_max,
                 Avatar.y >= y_min, Avatar.y <= y_max,
                 sa.or_(Avatar.x == avatar.x, Avatar.y == avatar.y)
@@ -91,13 +91,13 @@ class VeefiveController(BaseController):
         tiles, others = get_tiles(avatar)
 
         ret = {'tiles':tiles, 'avatar':avatar, 'others':others,
-                'map':avatar.map}
+                'maze':avatar.maze}
         response.headers['Content-type'] = 'text/plain'
         return simplejson.dumps(ret, indent=2, default=custom_encode)
 
-    def maze_dump(self, map_name):
-        maze = Session.query(Mapo).filter(Mapo.name==map_name).one()
-        paths = Session.query(Tile).filter(Tile.map==maze).all()
+    def maze_dump(self, maze_name):
+        maze = Session.query(Maze).filter(Maze.name==maze_name).one()
+        paths = Session.query(Tile).filter(Tile.maze==maze).all()
         maze_tiles = {}
         for path in paths:
             maze_tiles[(path.x, path.y)] = ' ' # hex(path.get_shape())[-1].upper()
@@ -132,7 +132,7 @@ class VeefiveController(BaseController):
             raise HTTPClientError('bad move')
         avatar = Session.query(Avatar).filter(Avatar.name==aid).one()
         current_path = Session.query(Tile).filter(sa.and_(
-                            Tile.map == avatar.map,
+                            Tile.maze == avatar.maze,
                             Tile.x == avatar.x, Tile.y == avatar.y)).one()
         if not move & current_path.shape:
             raise HTTPClientError('cannot go that way')
@@ -148,5 +148,5 @@ class VeefiveController(BaseController):
         visible = [tile for tile in post_tiles if tile not in pre_tiles]
 
         ret = {'tiles':visible, 'avatar':avatar, 'others':others,
-                'map':avatar.map}
+                'maze':avatar.maze}
         return simplejson.dumps(ret, indent=2, default=custom_encode)

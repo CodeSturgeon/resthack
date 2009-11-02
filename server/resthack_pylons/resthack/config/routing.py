@@ -20,7 +20,7 @@ def make_map():
 
     # CUSTOM ROUTES HERE
 
-    map.connect('/maps/{map_name}/dump', controller='veefive',
+    map.connect('/maps/{maze_name}/dump', controller='veefive',
                 action='maze_dump', conditions=dict(method=['GET', 'HEAD']))
     map.connect('/avatars/{aid}', controller='veefive', action='pos_get',
                 conditions=dict(method=['GET', 'HEAD']))
