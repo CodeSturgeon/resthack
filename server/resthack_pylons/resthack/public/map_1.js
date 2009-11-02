@@ -73,8 +73,8 @@ var clear_tiles = function(tiles){
 };
 
 var paint_movers = function(json,cls){
+    if(!cls){cls='avatar'};
     if(json.avatar){
-        if(!cls){cls='avatar'};
         var selector = '#'+json.avatar.x+'-'+json.avatar.y;
         jQuery(selector).attr('class',cls);
     }
