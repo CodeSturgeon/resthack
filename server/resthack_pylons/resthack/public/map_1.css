@@ -9,9 +9,16 @@ td.shade {
 td.clear {
 	background-color: #b3b3b3;
 }
+td.avatar {
+	background-color: #007eff;
+}
+
+td.other {
+	
+}
 td {
-	width: 20px;
-	height: 20px;
+	width: 4px;
+	height: 6px;
 	text-align: center;
 }
 th {

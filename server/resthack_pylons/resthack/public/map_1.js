@@ -77,10 +77,10 @@ var paint_mover = function(){
     return function(x,y,name){
         if(movers[name] != undefined){
             var selector = '#'+movers[name].x+'-'+movers[name].y;
-            jQuery(selector).html('');
+            jQuery(selector).attr('class','clear');
         }
         var selector = '#'+x+'-'+y;
-        jQuery(selector).html(name);
+        jQuery(selector).attr('class','avatar');
         movers[name] = {x:x,y:y};
     }
 }();
