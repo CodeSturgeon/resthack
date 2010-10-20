@@ -1,0 +1,34 @@
+.actor
+{
+	position:absolute;
+	width:16px;
+	height:16px;
+	/* Must have a high z-index so as to sit on top. */
+	z-index:10;
+}
+
+.baseTile
+{
+	position:absolute;
+	width:16px;
+	height:16px;
+}
+
+/* Actors */
+#thePlayerID
+{
+	background-image:url(../images/tiles/player.gif);
+	background-repeat:no-repeat;
+}
+
+/* Map tiles */
+.solidTileC
+{
+	background-image:url(../images/tiles/stone.jpg);
+	background-repeat:no-repeat;
+}
+.clearTileC
+{
+	background-image:url(../images/tiles/floor.jpg);
+	background-repeat:no-repeat;
+}
