@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns:global="#local-functions" xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>JC game notes</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+		<meta http-equiv="imagetoolbar" content="no"/>
+		<script type="text/javascript" language="JavaScript" src="js/debugger.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/eventmanager.js"></script>
+
+		<script type="text/javascript" language="JavaScript" src="js/fakeydata.js"></script>
+
+		<script type="text/javascript" language="JavaScript" src="js/gui/screen_renderer.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/gui/messager.js"></script>
+
+		<script type="text/javascript" language="JavaScript" src="js/game/session.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/game/map.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/game/character.js"></script>
+
+		<script type="text/javascript" language="JavaScript" src="js/io/server_io.js"></script>
+
+		<link rel="stylesheet" href="css/common.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="css/tiles.css" type="text/css" media="screen" />
+	</head>
+	<body onload="EM.trigger('pageLoaded', document);" onunload="DEBUG.goAway()">
+		<div id="contentWrapperID">
+			<div id="titleID"><h1>RESTHack</h1></div>
+			<div id="mapOutputID"></div>
+			<div id="textOutputID"></div>
+			<div id="controlsID">
+				<div id="navControlsID">
+					<div id="upArrowID"><input type="button" value="&uArr;" onclick="EM.trigger('navigate','n')"/></div>
+					<div id="downArrowID"><input type="button" value="&dArr;" onclick="EM.trigger('navigate','s')"/></div>
+					<div id="leftArrowID"><input type="button" value="&lArr;" onclick="EM.trigger('navigate','w')"/></div>
+					<div id="rightArrowID"><input type="button" value="&rArr;" onclick="EM.trigger('navigate','e')"/></div>
+				</div>
+				<div id="testCommandsHolderID">
+					<!--<a href="#" onclick="">Draw test map</a>-->
+					<a href="#" onclick="EM.trigger('generateTileData');">Output current map</a>
+					<a href="#" onclick="EM.trigger('SERVER_navigateRequest', _objMovementRequestResult1);">Fake Server momvement 1</a>
+					<a href="#" onclick="EM.trigger('SERVER_navigateRequest', _objMovementRequestResult2);">Fake Server momvement 2</a>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
+

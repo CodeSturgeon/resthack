@@ -1,0 +1,102 @@
+body
+{
+	font-family: 	arial;
+	font-size:	12px;
+}
+img
+{
+	border: none;
+}
+
+#contentWrapperID
+{
+	position:relative;
+	margin:auto;
+	top:0px;
+	width:800px;
+	height:600px;
+	text-align:left;
+	border:1px solid black;
+}
+#titleID
+{
+	position:absolute;
+	top:10px;
+	left:534px;
+}
+#titleID h1
+{
+	margin:0px;
+}
+#mapOutputID
+{
+	position:absolute;
+	top:10px;
+	left:10px;
+	width:512px;
+	height:512px;
+	border:1px solid grey;
+}
+#textOutputID
+{
+	position:absolute;
+	top:40px;
+	left:534px;
+	width:256px;
+	height:548px;
+	border:1px solid grey;
+	overflow:auto;
+}
+#controlsID
+{
+	position:absolute;
+	top:535px;
+	left:10px;
+	width:512px;
+	height:53px;
+	border:1px solid grey;
+}
+#navControlsID
+{
+	position:absolute;
+	top:4px;
+	left:4px;
+	width:100px;
+	height:44px;
+	font-size:	16px;
+	font-weight:bold;
+}
+#upArrowID
+{
+	position:absolute;
+	top:0px;
+	left:34px;
+}
+#downArrowID
+{
+	position:absolute;
+	top:22px;
+	left:34px;
+}
+#leftArrowID
+{
+	position:absolute;
+	top:10px;
+	left:0px;
+}
+#rightArrowID
+{
+	position:absolute;
+	top:10px;
+	left:66px;
+}
+#testCommandsHolderID
+{
+	position:absolute;
+	top:4px;
+	left:108px;
+	width:398px;
+	height:44px;
+	overflow:auto;
+	border:1px solid grey;
+}
