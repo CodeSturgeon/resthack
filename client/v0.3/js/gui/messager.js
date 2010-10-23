@@ -7,12 +7,12 @@ MESSAGER =
 
 	objDOM:null,
 
-	handleEvent_pageLoaded:function (_objWhatDOM)
+	handleEvent_primeDOMLinks : function (_objWhatDOM)
 	{
 		this.objDOM = _objWhatDOM;
 	},
 
-	say:function (_strWhatMessage, _strWhatClass)
+	say : function (_strWhatMessage, _strWhatClass)
 	{
 		this.objDOM.getElementById("textOutputID").innerHTML += "<div id='message" + this.intMessageCount + "ID' class='_strWhatClass'><a id='message" + this.intMessageCount + "AnchorID' name='message" + this.intMessageCount + "'></a>" + _strWhatMessage + "</div>";
 		var _objLastMessage = this.objDOM.getElementById("message" + this.intMessageCount + "AnchorID");

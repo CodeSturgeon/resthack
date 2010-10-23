@@ -22,7 +22,7 @@ SCREEN_RENDERER =
 		"clear":"<div id='tileX_%1_Y_%2_ID' style='top:%3px; left:%4px;' class='baseTile clearTileC' onclick='EM.trigger(\"toggleTile\", this)'>&nbsp;</div>"
 	},
 
-	handleEvent_pageLoaded:function (_objWhatDOM)
+	handleEvent_primeDOMLinks : function (_objWhatDOM)
 	{
 		this.objDOM = _objWhatDOM;
 	},

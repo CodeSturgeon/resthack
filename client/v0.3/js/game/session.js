@@ -11,14 +11,17 @@ SESSION =
 		this._getStartData();
 	},
 
+	handleEvent_SERVER_testCallback : function (_objWhatJSON)
+	{
+		alert("Fish?");
+	},
+
 	_getStartData : function ()
 	{
 		this.debug("SESSION._getStartData()",1);
-		SERVER_IO.sendRequestData("SERVER_turnInfo", "GET", this._strServerBasePath + "turn/info.js", null);
-		SERVER_IO.sendRequestData("SERVER_mapInfo", "GET", this._strServerBasePath + "map/info.js", null);
-		SERVER_IO.sendRequestData("SERVER_mapAllTiles", "GET", this._strServerBasePath + "map/all_tiles.js", null);
-		//EM.trigger('SERVER_turnInfo', _objSpecificTurnInfoRequest);
-		//EM.trigger('SERVER_mapInfo', _objMapInfo);
+		//(_strResourcePath, _strRequestType, _objRequestParams, _strReturnEventCall)
+		SERVER_IO.makeRequest("avatar/funkmaster", "", false, "SERVER_testCallback");
+
 	},
 
 	debug : function (strMessage, intPriority, objCallerObject, booCalleeChain)
