@@ -70,27 +70,31 @@ SCREEN_RENDERER =
 
 	_renderAllTiles:function ()
 	{
+		//alert("_renderAllTiles")
 		var _htmOutputHTML = "";
-		var intXCount = parseInt(MAP_HOLDER.intMapXStart);
+		//var intXCount = parseInt(MAP_HOLDER.intMapXStart);
+
 		this.debug("MAP_HOLDER.intMapXEnd:" + MAP_HOLDER.intMapXEnd + "\nMAP_HOLDER.intMapYEnd" + MAP_HOLDER.intMapYEnd,1);
-		while (intXCount <= MAP_HOLDER.intMapXEnd)
+		var count = 0;
+		while (count < MAP_HOLDER.arrMapTiles.length)
 		{
-			var intYCount = parseInt(MAP_HOLDER.intMapYStart);
-			while (intYCount <= MAP_HOLDER.intMapYEnd)
+			var _arrCurrRange = MAP_HOLDER.arrMapTiles[count];
+			var iCount = 0;
+			while (iCount < _arrCurrRange.length)
 			{
-
 				var _strTileHTML = this.objTileHTMLFragments["wrapperStart"] + "\n";
-				_strTileHTML = _strTileHTML.replace("%2", intXCount);
-				_strTileHTML = _strTileHTML.replace("%1", intYCount);
+				_strTileHTML = _strTileHTML.replace("%2", count);
+				_strTileHTML = _strTileHTML.replace("%1", iCount);
 
-				_strTileHTML += this._getHTMLForCoords(intXCount, intYCount);
+				_strTileHTML += this._getHTMLForCoords(iCount, count);
 
 				_strTileHTML += this.objTileHTMLFragments["wrapperEnd"] + "\n";
 				_htmOutputHTML += _strTileHTML + "\n";
-				intYCount++;
+				iCount++
 			}
-			intXCount++;
+			count++;
 		}
+		alert(_htmOutputHTML)
 		this.objDOM.getElementById("mapOutputID").innerHTML = _htmOutputHTML;
 	},
 
@@ -122,7 +126,7 @@ SCREEN_RENDERER =
 
 	_createBaseTileHTML:function(_objWhatMapTile)
 	{
-		var _htmBaseHTML = this.objTileHTMLFragments[_objWhatMapTile["type"]];
+		var _htmBaseHTML = this.objTileHTMLFragments['solid'];
 		_htmBaseHTML = _htmBaseHTML.replace("%2", parseInt(_objWhatMapTile["x"]));
 		_htmBaseHTML = _htmBaseHTML.replace("%1", parseInt(_objWhatMapTile["y"]));
 		_htmBaseHTML = _htmBaseHTML.replace("%4", ((parseInt(_objWhatMapTile["x"]) * this.intTileHeight) + (0*_objWhatMapTile["x"])));

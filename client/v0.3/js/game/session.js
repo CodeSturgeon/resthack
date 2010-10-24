@@ -13,15 +13,15 @@ SESSION =
 
 	handleEvent_SERVER_testCallback : function (_objWhatJSON)
 	{
-		alert("Fish?");
+		//alert("Fish?");
+		this.debug("Map data: ", 1, _objWhatJSON)
 	},
 
 	_getStartData : function ()
 	{
 		this.debug("SESSION._getStartData()",1);
 		//(_strResourcePath, _strRequestType, _objRequestParams, _strReturnEventCall)
-		SERVER_IO.makeRequest("avatar/funkmaster", "", false, "SERVER_testCallback");
-
+		SERVER_IO.makeRequest("avatar/funkmaster", "", false, "SERVER_stateUpdate");
 	},
 
 	debug : function (strMessage, intPriority, objCallerObject, booCalleeChain)

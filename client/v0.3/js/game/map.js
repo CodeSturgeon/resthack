@@ -5,13 +5,14 @@ MAP_HOLDER =
 
 	arrMapTiles:[],
 
+/*
 	intMapWidth:null,
 	intMapHeight:null,
 	intMapXStart:null,
 	intMapYStart:null,
 	intMapXEnd:null,
 	intMapYEnd:null,
-
+*/
 	booHasInfo:false,
 	booHasTileData:false,
 
@@ -22,7 +23,7 @@ MAP_HOLDER =
 		this.debug("MAP_HOLDER.handleEvent_navigate(_strWhatDirection: '" + _strWhatDirection + "')",1);
 		if (this._localMoveValidator(_strWhatDirection))
 		{
-			var _objFakeMove = this._generateFakedMove(_strWhatDirection);
+			//var _objFakeMove = this._generateFakedMove(_strWhatDirection);
 			EM.trigger("SERVER_navigateRequest", _objFakeMove);
 		}
 	},
@@ -33,47 +34,55 @@ MAP_HOLDER =
 		var _objNewCoords = {"x":_objReturnInfo["x"],"y":_objReturnInfo["y"]};
 		EM.trigger("updateScreen", {"Character":_objNewCoords});
 	},
-
+/*
 	handleEvent_SERVER_mapInfo:function(_objMapInfo)
 	{
 		this.debug("MAP_HOLDER.handleEvent_SERVER_mapInfo(_objMapInfo: )",1, _objMapInfo);
+
 		this.intMapXStart = parseInt(_objMapInfo["xmin"]);
 		this.intMapYStart = parseInt(_objMapInfo["ymin"]);
 		this.intMapXEnd = parseInt(_objMapInfo["xmax"]);
 		this.intMapYEnd = parseInt(_objMapInfo["ymax"]);
 		this.intMapWidth = parseInt(_objMapInfo["xmax"] - _objMapInfo["xmin"]);
 		this.intMapHeight = parseInt(_objMapInfo["ymax"] - _objMapInfo["ymin"]);
+
 		this.booHasInfo = true;
 		if (this.booHasTileData == true)
 		{
 			EM.trigger("updateScreen");
 		}
 	},
+*/
 
-	handleEvent_SERVER_mapAllTiles:function(_arrMapTiles)
+	handleEvent_SERVER_stateUpdate:function(_objWhatData)
 	{
 		//alert(3)
-		this.debug("MAP_HOLDER.handleEvent_SERVER_mapAllTiles(_arrMapTiles: )",4, _arrMapTiles);
+		this.debug("MAP_HOLDER.handleEvent_SERVER_mapAllTiles(_objWhatData: )",4, _objWhatData);
 		//this.arrMapTiles = _arrMapTiles;
-		this.arrMapTiles = [];
+		//this.arrMapTiles = [];
 
-		var count = 0;
-
-		while (count < _arrMapTiles.length)
+		if (_objWhatData['tiles'])
 		{
-			var _objCurrTile = _arrMapTiles[count]
-			if (!this.arrMapTiles[_objCurrTile["x"]])
+			var _arrMapTiles = _objWhatData['tiles'];
+
+			var count = 0;
+
+			while (count < _arrMapTiles.length)
 			{
-				this.arrMapTiles[_objCurrTile["x"]] = [];
+				var _objCurrTile = _arrMapTiles[count]
+				if (!this.arrMapTiles[_objCurrTile["x"]])
+				{
+					this.arrMapTiles[_objCurrTile["x"]] = [];
+				}
+				this.arrMapTiles[_objCurrTile["x"]][_objCurrTile["y"]] = _objCurrTile;
+				count++;
 			}
-			this.arrMapTiles[_objCurrTile["x"]][_objCurrTile["y"]] = _objCurrTile;
-			count++;
-		}
 
-		this.booHasTileData = true;
-		if (this.booHasInfo == true)
-		{
+			this.booHasTileData = true;
+			//if (this.booHasInfo == true)
+			//{
 			EM.trigger("updateScreen");
+			//}
 		}
 	},
 
@@ -89,7 +98,7 @@ MAP_HOLDER =
 		}
 		EM.trigger("updateScreen", {"MapTiles":_arrMapTiles});
 	},
-
+/*
 	updateTiles:function(_objMapTiles)
 	{
 		for (var _strXPos in _objMapTiles)
@@ -101,7 +110,7 @@ MAP_HOLDER =
 			}
 		}
 	},
-
+*/
 	// Placeholder function
 	_localMoveValidator : function(_strWhatDirection)
 	{
@@ -131,7 +140,7 @@ MAP_HOLDER =
 		MESSAGER.say(CHARACTER.strCharName + " has hit head on wall, ouchies!");
 		return false;
 	},
-
+/*
 	_generateFakedMove:function(_strWhatDirection)
 	{
 		var _intPlayerX = CHARACTER.intXPos;
@@ -162,9 +171,9 @@ MAP_HOLDER =
 		this.debug("_objFakeMovementRequest",4,_objFakeMovementRequest)
 		return _objFakeMovementRequest;
 	},
+*/
 
-
-	// DEV Function
+	// DEV Functions
 	handleEvent_toggleTile:function(_objWhatTile)
 	{
 		//alert(_objWhatTile.id)
