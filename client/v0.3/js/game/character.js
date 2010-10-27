@@ -10,19 +10,22 @@ CHARACTER =
 	intYPos:null,
 	intMoves:null,
 
+	booUnrenderedUpdates : false,
+
 	getData:function ()
 	{
 		this.debug("CHARACTER.getData()",1);
 	},
 
-	handleEvent_SERVER_stateUpdate:function(_objWhatInfo)
+	handleEvent_SERVER_stateUpdate:function(_objWhatData)
 	{
-		if (_objWhatInfo['avatar'])
+		if (_objWhatData['avatar'])
 		{
-			this.intXPos = _objWhatInfo['avatar']['x'];
-			this.intYPos = _objWhatInfo['avatar']['y'];
-			this.intMoves = _objWhatInfo['avatar']['moves'];
-			this.debug("CHARACTER.handleEvent_SERVER_turnInfo(), this:",1, this);
+			this.intXPos = _objWhatData['avatar']['x'];
+			this.intYPos = _objWhatData['avatar']['y'];
+			this.intMoves = _objWhatData['avatar']['moves'];
+			this.booUnrenderedUpdates = true;
+			//this.debug("CHARACTER.handleEvent_SERVER_turnInfo(), this:",1, this);
 		}
 	},
 

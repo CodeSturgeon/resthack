@@ -6,13 +6,15 @@
 		<meta http-equiv="imagetoolbar" content="no"/>
 		<script type="text/javascript" language="JavaScript" src="js/debugger.js"></script>
 		<script type="text/javascript" language="JavaScript" src="js/eventmanager.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/timer_tracker.js"></script>
 
-		<script type="text/javascript" language="JavaScript" src="js/fakeydata.js"></script>
+		<!--<script type="text/javascript" language="JavaScript" src="js/fakeydata.js"></script>-->
 
 		<script type="text/javascript" language="JavaScript" src="js/gui/screen_renderer.js"></script>
 		<script type="text/javascript" language="JavaScript" src="js/gui/messager.js"></script>
 
 		<script type="text/javascript" language="JavaScript" src="js/game/session.js"></script>
+
 		<script type="text/javascript" language="JavaScript" src="js/game/map.js"></script>
 		<script type="text/javascript" language="JavaScript" src="js/game/character.js"></script>
 
@@ -21,7 +23,7 @@
 		<link rel="stylesheet" href="css/common.css" type="text/css" media="screen" />
 		<link rel="stylesheet" href="css/tiles.css" type="text/css" media="screen" />
 	</head>
-	<body onload="EM.trigger('primeDOMLinks', document); EM.trigger('pageLoaded', document);" onunload="DEBUG.goAway()">
+	<body onload="EM.trigger('primeDOMLinks', document); EM.trigger('pageLoaded', document);" onunload="TIMER_TRACKER.cleanUp(); DEBUG.goAway(); ">
 		<div id="contentWrapperID">
 			<div id="titleID"><h1>Jester 0.1</h1></div>
 			<div id="mapOutputID"></div>

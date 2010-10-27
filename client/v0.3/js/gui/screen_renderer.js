@@ -1,10 +1,15 @@
-SCREEN_RENDERER =
+var SCREEN_RENDERER =
 {
 	strName:"Screen renderer",
 	strDescription:"The renderer the screen including: map data, players etc.",
 
 	intTileWidth:16,
 	intTileHeight:16,
+
+	_objUpdateTimer : null,
+	_intUpdateInterval : 1000,
+
+	_objObjectsToUpdateFrom : {},
 
 	objDOM:null,
 
@@ -44,7 +49,44 @@ SCREEN_RENDERER =
 		}
 	},
 
-	renderMapTiles:function(_arrWhatTiles)
+	startUpdateTimer : function ()
+	{
+		if (this._objUpdateTimer == null)
+		{
+			this._objUpdateTimer = window.setInterval("SCREEN_RENDERER.updateScreen()", this._intUpdateInterval)
+		}
+	},
+
+	stopTimer : function ()
+	{
+		if (this._objUpdateTimer != null)
+		{
+			window.clearInterval(this._objUpdateTimer);
+		}
+	},
+
+	registerToUpdateFrom : function (_strUpdateKey, _objWhatInfoHolder, _strWhatPrimaryData)
+	{
+		this._objObjectsToUpdateFrom[_strUpdateKey] = {"obj":_objWhatInfoHolder, "data":_strWhatPrimaryData};
+	},
+
+	updateScreen : function ()
+	{
+		//alert("Fish")
+		for (var _strCurrKey in this._objObjectsToUpdateFrom)
+		{
+
+			var _objCurrUpdateable = this._objObjectsToUpdateFrom[_strCurrKey]['obj'];
+			//alert(_objCurrUpdateable.booUnrenderedUpdates)
+			if (_objCurrUpdateable.booUnrenderedUpdates)
+			{
+				alert("Update: " + _strCurrKey);
+				_objCurrUpdateable.booUnrenderedUpdates = false;
+			}
+		}
+	},
+
+	_renderMapTiles:function(_arrWhatTiles)
 	{
 		this.debug("SCREEN_RENDERER.renderMapTiles()",1);
 		if (!_arrWhatTiles)
@@ -57,7 +99,7 @@ SCREEN_RENDERER =
 		}
 	},
 
-	renderCharacter:function(_objNewCoords)
+	_renderCharacter:function(_objNewCoords)
 	{
 		var _objCurrTile = MAP_HOLDER.arrMapTiles[CHARACTER.intXPos][CHARACTER.intYPos];
 		var _objNewTile = MAP_HOLDER.arrMapTiles[_objNewCoords["x"]][_objNewCoords["y"]];
@@ -94,7 +136,7 @@ SCREEN_RENDERER =
 			}
 			count++;
 		}
-		alert(_htmOutputHTML)
+		//alert(_htmOutputHTML)
 		this.objDOM.getElementById("mapOutputID").innerHTML = _htmOutputHTML;
 	},
 
@@ -142,7 +184,6 @@ SCREEN_RENDERER =
 		return _htmReturnString;
 	},
 
-
 	_getCharacterHTML:function(_intWhatX, _intWhatY)
 	{
 		//this.debug("SCREEN_RENDERER.renderCharacter()",1);
@@ -166,3 +207,4 @@ SCREEN_RENDERER =
 	}
 }
 EM.register(SCREEN_RENDERER)
+TIMER_TRACKER.register(SCREEN_RENDERER, "stopTimer");

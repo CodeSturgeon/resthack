@@ -9,19 +9,18 @@ SESSION =
 	{
 		this.debug("Sesson loaded.", 1);
 		this._getStartData();
-	},
-
-	handleEvent_SERVER_testCallback : function (_objWhatJSON)
-	{
-		//alert("Fish?");
-		this.debug("Map data: ", 1, _objWhatJSON)
+		this._startRenderer();
 	},
 
 	_getStartData : function ()
 	{
 		this.debug("SESSION._getStartData()",1);
-		//(_strResourcePath, _strRequestType, _objRequestParams, _strReturnEventCall)
 		SERVER_IO.makeRequest("avatar/funkmaster", "", false, "SERVER_stateUpdate");
+	},
+
+	_startRenderer : function ()
+	{
+		SCREEN_RENDERER.startUpdateTimer();
 	},
 
 	debug : function (strMessage, intPriority, objCallerObject, booCalleeChain)
