@@ -122,9 +122,9 @@ var SCREEN_RENDERER =
 		var _htmBaseHTML = this.objTileHTMLFragments['tile'];
 		_htmBaseHTML = _htmBaseHTML.replace("%2", parseInt(_objWhatMapTile["x"]));
 		_htmBaseHTML = _htmBaseHTML.replace("%1", parseInt(_objWhatMapTile["y"]));
-		_htmBaseHTML = _htmBaseHTML.replace("%3", ((parseInt(_objWhatMapTile["x"]) * this.intTileHeight) + (1 * _objWhatMapTile["x"])));
-		_htmBaseHTML = _htmBaseHTML.replace("%4", ((parseInt(_objWhatMapTile["y"]) * this.intTileHeight) + (1 * _objWhatMapTile["y"])));
-		_htmBaseHTML = _htmBaseHTML.replace("XXTILE_SHAPE_CLASSXX", "tileShape" + _objWhatMapTile["shape"] + "C");
+		_htmBaseHTML = _htmBaseHTML.replace("%3", ((parseInt(_objWhatMapTile["x"]) * this.intTileHeight) + (2 * _objWhatMapTile["x"])));
+		_htmBaseHTML = _htmBaseHTML.replace("%4", ((parseInt(_objWhatMapTile["y"]) * this.intTileHeight) + (2 * _objWhatMapTile["y"])));
+		_htmBaseHTML = _htmBaseHTML.replace("XXTILE_SHAPE_CLASSXX", "tileShape" + parseInt(_objWhatMapTile["shape"]) + "C");
 		return _htmBaseHTML;
 	},
 
