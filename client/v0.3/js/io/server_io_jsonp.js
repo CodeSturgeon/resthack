@@ -3,6 +3,9 @@ SERVER_IO =
 	strName : "The server IO Object",
 	strDescription : "Makes requests to the server via JSONP, each request is synched to a specific callback object.",
 	objRequests:{},
+
+	_booPurgeScriptBlocks : true,
+
 	_objDOM : null,
 
 	_strJSONPCallbackPrefix : "?jsonp_callback=SERVER_IO.objRequests.",
@@ -30,7 +33,10 @@ SERVER_IO =
 		EM.trigger(_objWhatIORequest.strReturnEventCall, _objJSONData);
 
 		//alert("_objWhatIORequest.domScriptTag.src: " + _objWhatIORequest.domScriptTag.src)
-		this._removeScriptBlock(_objWhatIORequest.domScriptTag);
+		if (this._booPurgeScriptBlocks)
+		{
+			this._removeScriptBlock(_objWhatIORequest.domScriptTag);
+		}
 
 		delete this.objRequests[_objWhatIORequest.strID];
 	},
