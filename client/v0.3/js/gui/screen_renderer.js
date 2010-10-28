@@ -22,16 +22,22 @@ var SCREEN_RENDERER =
 		// Charcter tile
 		"character":"<div id='thePlayerID' style='top:%1px; left:%2px;' class='actor'>&nbsp;</div>",
 
-		// Base tiles
-		"solid":"<div id='tileX_%1_Y_%2_ID' style='top:%3px; left:%4px;' class='baseTile solidTileC' onclick='EM.trigger(\"toggleTile\", this)'>&nbsp;</div>",
-		"clear":"<div id='tileX_%1_Y_%2_ID' style='top:%3px; left:%4px;' class='baseTile clearTileC' onclick='EM.trigger(\"toggleTile\", this)'>&nbsp;</div>"
+		// Base tile
+		"tile":"<div id='tileX_%1_Y_%2_ID' style='top:%3px; left:%4px;' class='baseTile XXTILE_SHAPE_CLASSXX'>&nbsp;</div>",
+		//"solid":"<div id='tileX_%1_Y_%2_ID' style='top:%3px; left:%4px;' class='baseTile solidTileC' onclick='EM.trigger(\"toggleTile\", this)'>&nbsp;</div>",
+		//"clear":"<div id='tileX_%1_Y_%2_ID' style='top:%3px; left:%4px;' class='baseTile clearTileC' onclick='EM.trigger(\"toggleTile\", this)'>&nbsp;</div>"
 	},
+
+	//_objDOMElements : {},
+
+	_strMapOutputID : "mapOutputID",
 
 	handleEvent_primeDOMLinks : function (_objWhatDOM)
 	{
 		this.objDOM = _objWhatDOM;
+		this.domMapWrapper = this.objDOM.getElementById(this._strMapOutputID);
 	},
-
+/*
 	handleEvent_updateScreen:function(_objWhatChangedData)
 	{
 		this.debug("SCREEN_RENDERER.handleEvent_updateScreen()",1);
@@ -48,7 +54,7 @@ var SCREEN_RENDERER =
 			//this.renderCharacter();
 		}
 	},
-
+*/
 	startUpdateTimer : function ()
 	{
 		if (this._objUpdateTimer == null)
@@ -80,12 +86,49 @@ var SCREEN_RENDERER =
 			//alert(_objCurrUpdateable.booUnrenderedUpdates)
 			if (_objCurrUpdateable.booUnrenderedUpdates)
 			{
-				alert("Update: " + _strCurrKey);
+				//alert("Update: " + _strCurrKey);
+				this["update_" + _strCurrKey](this._objObjectsToUpdateFrom[_strCurrKey]);
 				_objCurrUpdateable.booUnrenderedUpdates = false;
 			}
 		}
 	},
 
+	update_map : function (_objUpdateHolder)
+	{
+		var _objMap = _objUpdateHolder['obj'];
+		var _objTileCollection = _objMap[_objUpdateHolder['data']];
+		for (var _strCurrTileKey in _objTileCollection)
+		{
+			var _objCurrTile = _objTileCollection[_strCurrTileKey];
+			if (_objCurrTile.booUpdated)
+			{
+				this._renderTile(_objCurrTile, _strCurrTileKey);
+				_objCurrTile.booUpdated = false;
+			}
+		}
+	},
+
+	_renderTile : function (_objWhatTile, _strWhatTileKey)
+	{
+		//if (!this._objDOMElements[_strWhatTileKey])
+		//{
+		//	this._objDOMElements[_strWhatTileKey] = this._createNewWrapper(_strWhatTileKey);
+		//}
+		this.domMapWrapper.innerHTML += this._createBaseTileHTML(_objWhatTile);
+	},
+
+	_createBaseTileHTML:function(_objWhatMapTile)
+	{
+		var _htmBaseHTML = this.objTileHTMLFragments['tile'];
+		_htmBaseHTML = _htmBaseHTML.replace("%2", parseInt(_objWhatMapTile["x"]));
+		_htmBaseHTML = _htmBaseHTML.replace("%1", parseInt(_objWhatMapTile["y"]));
+		_htmBaseHTML = _htmBaseHTML.replace("%3", ((parseInt(_objWhatMapTile["x"]) * this.intTileHeight) + (1 * _objWhatMapTile["x"])));
+		_htmBaseHTML = _htmBaseHTML.replace("%4", ((parseInt(_objWhatMapTile["y"]) * this.intTileHeight) + (1 * _objWhatMapTile["y"])));
+		_htmBaseHTML = _htmBaseHTML.replace("XXTILE_SHAPE_CLASSXX", "tileShape" + _objWhatMapTile["shape"] + "C");
+		return _htmBaseHTML;
+	},
+
+/*
 	_renderMapTiles:function(_arrWhatTiles)
 	{
 		this.debug("SCREEN_RENDERER.renderMapTiles()",1);
@@ -166,15 +209,6 @@ var SCREEN_RENDERER =
 		return _strTileHTML;
 	},
 
-	_createBaseTileHTML:function(_objWhatMapTile)
-	{
-		var _htmBaseHTML = this.objTileHTMLFragments['solid'];
-		_htmBaseHTML = _htmBaseHTML.replace("%2", parseInt(_objWhatMapTile["x"]));
-		_htmBaseHTML = _htmBaseHTML.replace("%1", parseInt(_objWhatMapTile["y"]));
-		_htmBaseHTML = _htmBaseHTML.replace("%4", ((parseInt(_objWhatMapTile["x"]) * this.intTileHeight) + (0*_objWhatMapTile["x"])));
-		_htmBaseHTML = _htmBaseHTML.replace("%3", ((parseInt(_objWhatMapTile["y"]) * this.intTileHeight) + (0*_objWhatMapTile["y"])));
-		return _htmBaseHTML;
-	},
 
 	// Checks through other collections to find anything at this tile address.
 	_getExtraTileItems : function(_intWhatX, _intWhatY)
@@ -198,6 +232,7 @@ var SCREEN_RENDERER =
 		return "";
 	},
 
+*/
 	debug : function (strMessage, intPriority, objCallerObject, booCalleeChain)
 	{
 		if (DEBUG)

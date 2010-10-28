@@ -22,13 +22,99 @@
 }
 
 /* Map tiles */
-.solidTileC
+.tileShape0C
 {
-	background-image:url(../images/tiles/stone.jpg);
+
+	background-image:url(../images/tiles/floor_0.jpg);
 	background-repeat:no-repeat;
 }
-.clearTileC
+.tileShape1C
 {
-	background-image:url(../images/tiles/floor.jpg);
+
+	background-image:url(../images/tiles/floor_1.jpg);
+	background-repeat:no-repeat;
+}
+.tileShape2C
+{
+
+	background-image:url(../images/tiles/floor_2.jpg);
+	background-repeat:no-repeat;
+}
+.tileShape3C
+{
+
+	background-image:url(../images/tiles/floor_3.jpg);
+	background-repeat:no-repeat;
+}
+.tileShape4C
+{
+
+	background-image:url(../images/tiles/floor_4.jpg);
+	background-repeat:no-repeat;
+}
+.tileShape5C
+{
+
+	background-image:url(../images/tiles/floor_5.jpg);
+	background-repeat:no-repeat;
+}
+.tileShape6C
+{
+
+	background-image:url(../images/tiles/floor_6.jpg);
+	background-repeat:no-repeat;
+}
+.tileShape7C
+{
+
+	background-image:url(../images/tiles/floor_7.jpg);
+	background-repeat:no-repeat;
+}
+.tileShape8C
+{
+
+	background-image:url(../images/tiles/floor_8.jpg);
+	background-repeat:no-repeat;
+}
+.tileShape9C
+{
+
+	background-image:url(../images/tiles/floor_9.jpg);
+	background-repeat:no-repeat;
+}
+.tileShape10C
+{
+
+	background-image:url(../images/tiles/floor_10.jpg);
+	background-repeat:no-repeat;
+}
+.tileShape11C
+{
+
+	background-image:url(../images/tiles/floor_11.jpg);
+	background-repeat:no-repeat;
+}
+.tileShape12C
+{
+
+	background-image:url(../images/tiles/floor_12.jpg);
+	background-repeat:no-repeat;
+}
+.tileShape13C
+{
+
+	background-image:url(../images/tiles/floor_13.jpg);
+	background-repeat:no-repeat;
+}
+.tileShape14C
+{
+
+	background-image:url(../images/tiles/floor_14.jpg);
+	background-repeat:no-repeat;
+}
+.tileShape15C
+{
+
+	background-image:url(../images/tiles/floor_15.jpg);
 	background-repeat:no-repeat;
 }

@@ -38,6 +38,7 @@ MAP_HOLDER =
 			var _strTileKey = _objCurrTile['x'] + this._strTileKeySeperator + _objCurrTile['y'];
 
 			this.objMapTiles[_strTileKey] = _objCurrTile;
+			this.objMapTiles[_strTileKey].booUpdated = true;
 			count++;
 		}
 	},
