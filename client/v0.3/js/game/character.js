@@ -39,3 +39,4 @@ CHARACTER =
 }
 
 EM.register(CHARACTER)
+SCREEN_RENDERER.registerToUpdateFrom("character", CHARACTER, null);

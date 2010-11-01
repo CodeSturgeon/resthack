@@ -36,6 +36,7 @@ img
 	width:512px;
 	height:512px;
 	border:1px solid red;
+	background-color:grey;
 }
 #textOutputID
 {

@@ -25,6 +25,7 @@ MAP_HOLDER =
 		if (_objWhatData['tiles'])
 		{
 			this._addTiles(_objWhatData['tiles']);
+			//this._addShadeTiles();
 			this.booUnrenderedUpdates = true;
 		}
 	},

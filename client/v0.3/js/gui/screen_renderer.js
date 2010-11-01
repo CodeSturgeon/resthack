@@ -31,6 +31,7 @@ var SCREEN_RENDERER =
 	//_objDOMElements : {},
 
 	_strMapOutputID : "mapOutputID",
+	_strCharacterID : "thePlayerID",
 
 	handleEvent_primeDOMLinks : function (_objWhatDOM)
 	{
@@ -108,6 +109,24 @@ var SCREEN_RENDERER =
 		}
 	},
 
+
+	update_character : function (_objUpdateHolder)
+	{
+		if (!this.domCharacter)
+		{
+			alert(_objUpdateHolder['obj']['intXPos'])
+			var _htmCharacter = this._getCharacterHTML(_objUpdateHolder['obj']['intXPos'], _objUpdateHolder['obj']['intYPos']);
+			//alert("_htmCharacter: " + _htmCharacter)
+			this.domMapWrapper.innerHTML += _htmCharacter;
+			this.domCharacter = this.objDOM.getElementById(this._strCharacterID);
+		}
+		else
+		{
+			this.domCharacter.style.left = (parseInt(_objUpdateHolder['intXPos']) * this.intTileHeight) + "px";
+			this.domCharacter.style.top = (parseInt(_objUpdateHolder['intYPos']) * this.intTileHeight) + "px";
+		}
+	},
+
 	_renderTile : function (_objWhatTile, _strWhatTileKey)
 	{
 		//if (!this._objDOMElements[_strWhatTileKey])
@@ -120,12 +139,26 @@ var SCREEN_RENDERER =
 	_createBaseTileHTML:function(_objWhatMapTile)
 	{
 		var _htmBaseHTML = this.objTileHTMLFragments['tile'];
-		_htmBaseHTML = _htmBaseHTML.replace("%2", parseInt(_objWhatMapTile["x"]));
-		_htmBaseHTML = _htmBaseHTML.replace("%1", parseInt(_objWhatMapTile["y"]));
-		_htmBaseHTML = _htmBaseHTML.replace("%3", ((parseInt(_objWhatMapTile["x"]) * this.intTileHeight) + (2 * _objWhatMapTile["x"])));
-		_htmBaseHTML = _htmBaseHTML.replace("%4", ((parseInt(_objWhatMapTile["y"]) * this.intTileHeight) + (2 * _objWhatMapTile["y"])));
+		_htmBaseHTML = _htmBaseHTML.replace("%1", parseInt(_objWhatMapTile["x"]));
+		_htmBaseHTML = _htmBaseHTML.replace("%2", parseInt(_objWhatMapTile["y"]));
+		_htmBaseHTML = _htmBaseHTML.replace("%4", ((parseInt(_objWhatMapTile["x"]) * this.intTileHeight) + (0 * _objWhatMapTile["x"])));
+		_htmBaseHTML = _htmBaseHTML.replace("%3", ((parseInt(_objWhatMapTile["y"]) * this.intTileHeight) + (0 * _objWhatMapTile["y"])));
 		_htmBaseHTML = _htmBaseHTML.replace("XXTILE_SHAPE_CLASSXX", "tileShape" + parseInt(_objWhatMapTile["shape"]) + "C");
 		return _htmBaseHTML;
+	},
+
+	_getCharacterHTML:function(_intWhatX, _intWhatY)
+	{
+		//this.debug("SCREEN_RENDERER.renderCharacter()",1);
+		//if ((CHARACTER.intXPos == _intWhatX) && (CHARACTER.intYPos == _intWhatY))
+		//{
+			var _htmReturn = this.objTileHTMLFragments["character"];
+			_htmReturn = _htmReturn.replace("%2", (parseInt(_intWhatX) * this.intTileHeight));
+			_htmReturn = _htmReturn.replace("%1", (parseInt(_intWhatY) * this.intTileHeight));
+			alert(_htmReturn)
+			return _htmReturn;
+		//}
+		//return "";
 	},
 
 /*
