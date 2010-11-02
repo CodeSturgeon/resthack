@@ -4,7 +4,7 @@ SERVER_IO =
 	strDescription : "Makes requests to the server via JSONP, each request is synched to a specific callback object.",
 	objRequests:{},
 
-	_booPurgeScriptBlocks : true,
+	_booPurgeScriptBlocks : false,
 
 	_objDOM : null,
 
@@ -22,7 +22,9 @@ SERVER_IO =
 	{
 		var _strEventID = "e" + new Date().getTime() + Math.round(Math.random() + 10000);
 		var _strRequestParams = this._encodeRequest(_strRequestType, _objRequestParams);
-		var _strFullRequestURI = this._strBaseURI + _strResourcePath + this._strJSONPCallbackPrefix + _strEventID + this._strJSONPCallbackSuffix;
+		//alert(_strRequestParams)
+		var _strFullRequestURI = this._strBaseURI + _strResourcePath + this._strJSONPCallbackPrefix + _strEventID + this._strJSONPCallbackSuffix + _strRequestParams;
+		//alert("_strFullRequestURI: " + _strFullRequestURI)
 
 		this.objRequests[_strEventID] = new IORequest(this, _strEventID, _strFullRequestURI, _strReturnEventCall)
 	},

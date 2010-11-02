@@ -1,4 +1,4 @@
-MAP_HOLDER =
+var MAP_HOLDER =
 {
 	strName:"Map Holder",
 	strDescription:"The holder of map data.",
@@ -9,9 +9,19 @@ MAP_HOLDER =
 
 	booUnrenderedUpdates : false,
 
-	handleEvent_navigate:function(_strWhatDirection)
+	handleEvent_navigate:function(_intWhatDirection)
 	{
+		var _intCharX = CHARACTER.intXPos;
+		var _intCharY = CHARACTER.intYPos;
+		var _strTileKey = _intCharX + this._strTileKeySeperator + _intCharY;
+		var _objCurrTile = this.objMapTiles[_strTileKey];
 
+		if ((_objCurrTile.shape & _intWhatDirection) == _intWhatDirection)
+		{
+			//(_strResourcePath, _strRequestType, _objRequestParams, _strReturnEventCall)
+			var _objMoveData = {"move": _intWhatDirection, "move_lock": (CHARACTER.intMoves + 1)};
+			SERVER_IO.makeRequest("avatar/funkmaster", "moves", _objMoveData, "SERVER_stateUpdate");
+		}
 	},
 
 	handleEvent_SERVER_navigateRequestResult:function(_objReturnInfo)
@@ -43,7 +53,7 @@ MAP_HOLDER =
 			count++;
 		}
 	},
-
+/*
 	// Placeholder function
 	_localMoveValidator : function(_strWhatDirection)
 	{
@@ -73,7 +83,7 @@ MAP_HOLDER =
 		MESSAGER.say(CHARACTER.strCharName + " has hit head on wall, ouchies!");
 		return false;
 	},
-
+*/
 	debug : function (strMessage, intPriority, objCallerObject, booCalleeChain)
 	{
 		if (DEBUG)

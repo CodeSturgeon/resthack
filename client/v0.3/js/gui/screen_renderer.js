@@ -24,11 +24,8 @@ var SCREEN_RENDERER =
 
 		// Base tile
 		"tile":"<div id='tileX_%1_Y_%2_ID' style='top:%3px; left:%4px;' class='baseTile XXTILE_SHAPE_CLASSXX'>&nbsp;</div>",
-		//"solid":"<div id='tileX_%1_Y_%2_ID' style='top:%3px; left:%4px;' class='baseTile solidTileC' onclick='EM.trigger(\"toggleTile\", this)'>&nbsp;</div>",
-		//"clear":"<div id='tileX_%1_Y_%2_ID' style='top:%3px; left:%4px;' class='baseTile clearTileC' onclick='EM.trigger(\"toggleTile\", this)'>&nbsp;</div>"
 	},
 
-	//_objDOMElements : {},
 
 	_strMapOutputID : "mapOutputID",
 	_strCharacterID : "thePlayerID",
@@ -38,24 +35,6 @@ var SCREEN_RENDERER =
 		this.objDOM = _objWhatDOM;
 		this.domMapWrapper = this.objDOM.getElementById(this._strMapOutputID);
 	},
-/*
-	handleEvent_updateScreen:function(_objWhatChangedData)
-	{
-		this.debug("SCREEN_RENDERER.handleEvent_updateScreen()",1);
-		if (_objWhatChangedData)
-		{
-			for (var _strCurrMethodName in _objWhatChangedData)
-			{
-				this["render" + _strCurrMethodName](_objWhatChangedData[_strCurrMethodName]);
-			}
-		}
-		else
-		{
-			this.renderMapTiles();
-			//this.renderCharacter();
-		}
-	},
-*/
 	startUpdateTimer : function ()
 	{
 		if (this._objUpdateTimer == null)
@@ -79,15 +58,11 @@ var SCREEN_RENDERER =
 
 	updateScreen : function ()
 	{
-		//alert("Fish")
 		for (var _strCurrKey in this._objObjectsToUpdateFrom)
 		{
-
 			var _objCurrUpdateable = this._objObjectsToUpdateFrom[_strCurrKey]['obj'];
-			//alert(_objCurrUpdateable.booUnrenderedUpdates)
 			if (_objCurrUpdateable.booUnrenderedUpdates)
 			{
-				//alert("Update: " + _strCurrKey);
 				this["update_" + _strCurrKey](this._objObjectsToUpdateFrom[_strCurrKey]);
 				_objCurrUpdateable.booUnrenderedUpdates = false;
 			}
@@ -109,30 +84,24 @@ var SCREEN_RENDERER =
 		}
 	},
 
-
 	update_character : function (_objUpdateHolder)
 	{
 		if (!this.domCharacter)
 		{
-			alert(_objUpdateHolder['obj']['intXPos'])
 			var _htmCharacter = this._getCharacterHTML(_objUpdateHolder['obj']['intXPos'], _objUpdateHolder['obj']['intYPos']);
-			//alert("_htmCharacter: " + _htmCharacter)
 			this.domMapWrapper.innerHTML += _htmCharacter;
 			this.domCharacter = this.objDOM.getElementById(this._strCharacterID);
 		}
 		else
 		{
-			this.domCharacter.style.left = (parseInt(_objUpdateHolder['intXPos']) * this.intTileHeight) + "px";
-			this.domCharacter.style.top = (parseInt(_objUpdateHolder['intYPos']) * this.intTileHeight) + "px";
+			this.domCharacter = this.objDOM.getElementById(this._strCharacterID);
+			this.domCharacter.style.left = (parseInt(_objUpdateHolder['obj']['intXPos']) * this.intTileHeight) + "px";
+			this.domCharacter.style.top = (parseInt(_objUpdateHolder['obj']['intYPos']) * this.intTileHeight) + "px";
 		}
 	},
 
 	_renderTile : function (_objWhatTile, _strWhatTileKey)
 	{
-		//if (!this._objDOMElements[_strWhatTileKey])
-		//{
-		//	this._objDOMElements[_strWhatTileKey] = this._createNewWrapper(_strWhatTileKey);
-		//}
 		this.domMapWrapper.innerHTML += this._createBaseTileHTML(_objWhatTile);
 	},
 
@@ -149,16 +118,11 @@ var SCREEN_RENDERER =
 
 	_getCharacterHTML:function(_intWhatX, _intWhatY)
 	{
-		//this.debug("SCREEN_RENDERER.renderCharacter()",1);
-		//if ((CHARACTER.intXPos == _intWhatX) && (CHARACTER.intYPos == _intWhatY))
-		//{
-			var _htmReturn = this.objTileHTMLFragments["character"];
-			_htmReturn = _htmReturn.replace("%2", (parseInt(_intWhatX) * this.intTileHeight));
-			_htmReturn = _htmReturn.replace("%1", (parseInt(_intWhatY) * this.intTileHeight));
-			alert(_htmReturn)
-			return _htmReturn;
-		//}
-		//return "";
+		var _htmReturn = this.objTileHTMLFragments["character"];
+		_htmReturn = _htmReturn.replace("%2", (parseInt(_intWhatX) * this.intTileHeight));
+		_htmReturn = _htmReturn.replace("%1", (parseInt(_intWhatY) * this.intTileHeight));
+		//alert("_htmReturn: " + _htmReturn)
+		return _htmReturn;
 	},
 
 /*
@@ -242,7 +206,6 @@ var SCREEN_RENDERER =
 		return _strTileHTML;
 	},
 
-
 	// Checks through other collections to find anything at this tile address.
 	_getExtraTileItems : function(_intWhatX, _intWhatY)
 	{
@@ -264,7 +227,6 @@ var SCREEN_RENDERER =
 		}
 		return "";
 	},
-
 */
 	debug : function (strMessage, intPriority, objCallerObject, booCalleeChain)
 	{
