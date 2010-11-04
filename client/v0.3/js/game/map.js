@@ -13,22 +13,24 @@ var MAP_HOLDER =
 	{
 		var _intCharX = CHARACTER.intXPos;
 		var _intCharY = CHARACTER.intYPos;
+		var _intCurrMove = CHARACTER.intLocalMoves;
 		var _strTileKey = _intCharX + this._strTileKeySeperator + _intCharY;
 		var _objCurrTile = this.objMapTiles[_strTileKey];
 
-		if ((_objCurrTile.shape & _intWhatDirection) == _intWhatDirection)
+		if (this._localMoveValidator(_objCurrTile, _intWhatDirection, _intCharX, _intCharY, _intCurrMove))
 		{
+
 			//(_strResourcePath, _strRequestType, _objRequestParams, _strReturnEventCall)
-			var _objMoveData = {"move": _intWhatDirection, "move_lock": (CHARACTER.intMoves + 1)};
+			var _objMoveData = {"move": _intWhatDirection, "move_lock": (_intCurrMove + 1)};
 			SERVER_IO.makeRequest("avatar/funkmaster", "moves", _objMoveData, "SERVER_stateUpdate");
 		}
 	},
-
+/*
 	handleEvent_SERVER_navigateRequestResult:function(_objReturnInfo)
 	{
 
 	},
-
+*/
 	handleEvent_SERVER_stateUpdate:function(_objWhatData)
 	{
 		//this.debug("Map data: ", 1, _objWhatData)
@@ -38,6 +40,35 @@ var MAP_HOLDER =
 			//this._addShadeTiles();
 			this.booUnrenderedUpdates = true;
 		}
+	},
+
+	_localMoveValidator : function (_objWhatTile, _intWhatDirection, _intCurrX, _intCurrY, _intCurrMove)
+	{
+		if ((_objWhatTile.shape & _intWhatDirection) == _intWhatDirection)
+		{
+			switch (_intWhatDirection)
+			{
+				case 1:
+					_intCurrY--;
+				break;
+				case 2:
+					_intCurrX++;
+				break;
+				case 4:
+					_intCurrY++;
+				break;
+				case 8:
+					_intCurrX--;
+				break;
+			}
+			var _strTileKey = _intCurrX + this._strTileKeySeperator + _intCurrY;
+			if (this.objMapTiles[_strTileKey])
+			{
+				EM.trigger("localCharacterUpdate", {'x':_intCurrX, 'y':_intCurrY ,'moves':_intCurrMove})
+				return true;
+			}
+		}
+		return false;
 	},
 
 	_addTiles : function (_arrWhatTileData)

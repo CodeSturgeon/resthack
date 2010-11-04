@@ -4,7 +4,7 @@ SERVER_IO =
 	strDescription : "Makes requests to the server via JSONP, each request is synched to a specific callback object.",
 	objRequests:{},
 
-	_booPurgeScriptBlocks : false,
+	_booPurgeScriptBlocks : true,
 
 	_objDOM : null,
 

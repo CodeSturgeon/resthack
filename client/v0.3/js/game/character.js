@@ -25,9 +25,20 @@ var CHARACTER =
 			this.intXPos = _objWhatData['avatar']['x'];
 			this.intYPos = _objWhatData['avatar']['y'];
 			this.intMoves = _objWhatData['avatar']['moves'];
+			this.intLocalMoves = _objWhatData['avatar']['moves'];
 			this.booUnrenderedUpdates = true;
 			//this.debug("CHARACTER.handleEvent_SERVER_turnInfo(), this:",1, this);
 		}
+	},
+
+	handleEvent_localCharacterUpdate : function (_objWhatData)
+	{
+		//alert("X: " + _objWhatData['avatar']['x'] + "\nY: " + _objWhatData['avatar']['y'])
+		this.intXPos = _objWhatData['x'];
+		this.intYPos = _objWhatData['y'];
+		this.intLocalMoves = _objWhatData['moves'];
+		this.booUnrenderedUpdates = true;
+		//this.debug("CHARACTER.handleEvent_SERVER_turnInfo(), this:",1, this);
 	},
 
 	debug : function (strMessage, intPriority, objCallerObject, booCalleeChain)

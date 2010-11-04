@@ -7,7 +7,7 @@ var SCREEN_RENDERER =
 	intTileHeight:16,
 
 	_objUpdateTimer : null,
-	_intUpdateInterval : 1000,
+	_intUpdateInterval : 50,
 
 	_objObjectsToUpdateFrom : {},
 
@@ -98,6 +98,7 @@ var SCREEN_RENDERER =
 			this.domCharacter.style.left = (parseInt(_objUpdateHolder['obj']['intXPos']) * this.intTileHeight) + "px";
 			this.domCharacter.style.top = (parseInt(_objUpdateHolder['obj']['intYPos']) * this.intTileHeight) + "px";
 		}
+		this.domCharacter.scrollIntoView(true);
 	},
 
 	_renderTile : function (_objWhatTile, _strWhatTileKey)
