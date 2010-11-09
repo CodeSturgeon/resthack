@@ -7,30 +7,47 @@ var MAP_HOLDER =
 
 	objMapTiles:[],
 
+	_arrQueuedMoveRequests : [],
+	_booWaitingResponse : false,
+
 	booUnrenderedUpdates : false,
 
 	handleEvent_navigate:function(_intWhatDirection)
 	{
 		var _intCharX = CHARACTER.intXPos;
 		var _intCharY = CHARACTER.intYPos;
-		var _intCurrMove = CHARACTER.intLocalMoves;
+		var _intCurrLocalMove = CHARACTER.intLocalMoves;
+		var _intCurrValidatedMove = CHARACTER.intMoves;
 		var _strTileKey = _intCharX + this._strTileKeySeperator + _intCharY;
 		var _objCurrTile = this.objMapTiles[_strTileKey];
 
-		if (this._localMoveValidator(_objCurrTile, _intWhatDirection, _intCharX, _intCharY, _intCurrMove))
+		if (this._localMoveValidator(_objCurrTile, _intWhatDirection, _intCharX, _intCharY, _intCurrLocalMove))
 		{
+			var _objMoveData = {"move": _intWhatDirection, "move_lock": (_intCurrLocalMove + 1)};
+			this._arrQueuedMoveRequests[this._arrQueuedMoveRequests.length] = _objMoveData;
+			//this.debug("Added: ", 1, this._arrQueuedMoveRequests[this._arrQueuedMoveRequests.length - 1]);
+			CHARACTER.intLocalMoves++;
+			this._flushQueuedRequests();
 
-			//(_strResourcePath, _strRequestType, _objRequestParams, _strReturnEventCall)
-			var _objMoveData = {"move": _intWhatDirection, "move_lock": (_intCurrMove + 1)};
-			SERVER_IO.makeRequest("avatar/funkmaster", "moves", _objMoveData, "SERVER_stateUpdate");
+			// If we're more than one move ahead, queue
+			//if (_intCurrLocalMove > (_intCurrValidatedMove + 1))
+			//{
+			//	this.
+			//}
 		}
 	},
-/*
-	handleEvent_SERVER_navigateRequestResult:function(_objReturnInfo)
-	{
 
+	_flushQueuedRequests : function ()
+	{
+		if ((!this._booWaitingResponse) && (this._arrQueuedMoveRequests.length > 0))
+		{
+			SERVER_IO.makeRequest("avatar/funkmaster", "moves", this._arrQueuedMoveRequests, "SERVER_stateUpdate");
+			this._arrQueuedMoveRequests = [];
+			this._booWaitingResponse = true;
+		}
 	},
-*/
+
+
 	handleEvent_SERVER_stateUpdate:function(_objWhatData)
 	{
 		//this.debug("Map data: ", 1, _objWhatData)
@@ -40,6 +57,8 @@ var MAP_HOLDER =
 			//this._addShadeTiles();
 			this.booUnrenderedUpdates = true;
 		}
+		this._booWaitingResponse = false;
+		this._flushQueuedRequests();
 	},
 
 	_localMoveValidator : function (_objWhatTile, _intWhatDirection, _intCurrX, _intCurrY, _intCurrMove)
@@ -84,6 +103,7 @@ var MAP_HOLDER =
 			count++;
 		}
 	},
+
 /*
 	// Placeholder function
 	_localMoveValidator : function(_strWhatDirection)

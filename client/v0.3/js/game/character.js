@@ -9,6 +9,7 @@ var CHARACTER =
 	intXPos:null,
 	intYPos:null,
 	intMoves:null,
+	intLocalMoves:null,
 
 	booUnrenderedUpdates : false,
 
@@ -25,7 +26,10 @@ var CHARACTER =
 			this.intXPos = _objWhatData['avatar']['x'];
 			this.intYPos = _objWhatData['avatar']['y'];
 			this.intMoves = _objWhatData['avatar']['moves'];
-			this.intLocalMoves = _objWhatData['avatar']['moves'];
+			if (this.intLocalMoves == null)
+			{
+				this.intLocalMoves = _objWhatData['avatar']['moves'];
+			}
 			this.booUnrenderedUpdates = true;
 			//this.debug("CHARACTER.handleEvent_SERVER_turnInfo(), this:",1, this);
 		}

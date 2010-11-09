@@ -4,7 +4,7 @@ SERVER_IO =
 	strDescription : "Makes requests to the server via JSONP, each request is synched to a specific callback object.",
 	objRequests:{},
 
-	_booPurgeScriptBlocks : true,
+	_booPurgeScriptBlocks : false,
 
 	_objDOM : null,
 
@@ -18,11 +18,11 @@ SERVER_IO =
 		this._objDOM = _objWhatDOM;
 	},
 
-	makeRequest : function (_strResourcePath, _strRequestType, _objRequestParams, _strReturnEventCall)
+	makeRequest : function (_strResourcePath, _strRequestType, _arrRequestParams, _strReturnEventCall)
 	{
 		var _strEventID = "e" + new Date().getTime() + Math.round(Math.random() + 10000);
-		var _strRequestParams = this._encodeRequest(_strRequestType, _objRequestParams);
-		//alert(_strRequestParams)
+		var _strRequestParams = this._encodeRequest(_strRequestType, _arrRequestParams);
+		this.debug("_strRequestParams: " + unescape(_strRequestParams), 1);
 		var _strFullRequestURI = this._strBaseURI + _strResourcePath + this._strJSONPCallbackPrefix + _strEventID + this._strJSONPCallbackSuffix + _strRequestParams;
 		//alert("_strFullRequestURI: " + _strFullRequestURI)
 
@@ -43,18 +43,26 @@ SERVER_IO =
 		delete this.objRequests[_objWhatIORequest.strID];
 	},
 
-	_encodeRequest : function (_strRequestType, _objWhatRequestData)
+	_encodeRequest : function (_strRequestType, _arrRequestParams)
 	{
-		if (_strRequestType != "")
+		if ((_strRequestType != "") && (_arrRequestParams.length > 0))
 		{
-			var _arrRequestPairs = [];
-			for (var _strCurrKey in _objWhatRequestData)
+			var _arrEncodedRequests = [];
+			var count = 0;
+			while (count < _arrRequestParams.length)
 			{
-				// REFACTOR NOTE: This will most like need to detect
-				// the data type and convert/add quotes as required.
-				_arrRequestPairs[_arrRequestPairs.length] = '"' + _strCurrKey + '":' + _objWhatRequestData[_strCurrKey]
+				var _objCurrRequestData = _arrRequestParams[count];
+				var _arrCurrRequestPairs = [];
+				for (var _strCurrKey in _objCurrRequestData)
+				{
+					// REFACTOR NOTE: This will most like need to detect
+					// the data type and convert/add quotes as required.
+					_arrCurrRequestPairs[_arrCurrRequestPairs.length] = '"' + _strCurrKey + '":' + _objCurrRequestData[_strCurrKey];
+				}
+				_arrEncodedRequests[_arrEncodedRequests.length] = "{" + _arrCurrRequestPairs.join(",") + "}";
+				count++;
 			}
-			var _strEncodedRequest = "[{" + _arrRequestPairs.join(",") + "}]";
+			var _strEncodedRequest = "[" + _arrEncodedRequests.join(",") + "]";
 
 			return "&" + _strRequestType + "=" + escape(_strEncodedRequest);
 		}
