@@ -21,8 +21,10 @@ var MAP_HOLDER =
 		var _strTileKey = _intCharX + this._strTileKeySeperator + _intCharY;
 		var _objCurrTile = this.objMapTiles[_strTileKey];
 
-		if (this._localMoveValidator(_objCurrTile, _intWhatDirection, _intCharX, _intCharY, _intCurrLocalMove))
+		var _objMoveData = this._localMoveValidator(_objCurrTile, _intWhatDirection, _intCharX, _intCharY, _intCurrLocalMove)
+		if (_objMoveData)
 		{
+			EM.trigger("localCharacterUpdate", {'x':_objMoveData['intNewX'], 'y':_objMoveData['intNewY'] ,'moves':_intCurrLocalMove});
 			var _objMoveData = {"move": _intWhatDirection, "move_lock": (_intCurrLocalMove + 1)};
 			this._arrQueuedMoveRequests[this._arrQueuedMoveRequests.length] = _objMoveData;
 			//this.debug("Added: ", 1, this._arrQueuedMoveRequests[this._arrQueuedMoveRequests.length - 1]);
@@ -83,10 +85,11 @@ var MAP_HOLDER =
 			var _strTileKey = _intCurrX + this._strTileKeySeperator + _intCurrY;
 			if (this.objMapTiles[_strTileKey])
 			{
-				EM.trigger("localCharacterUpdate", {'x':_intCurrX, 'y':_intCurrY ,'moves':_intCurrMove})
-				return true;
+				//this.debug("MAP_HOLDER._localMoveValidator(), valid move.", 1)
+				return {"intNewX":_intCurrX, "intNewY":_intCurrY};
 			}
 		}
+		//this.debug("MAP_HOLDER._localMoveValidator(), INVALID move.", 3)
 		return false;
 	},
 

@@ -20,15 +20,19 @@ var CHARACTER =
 
 	handleEvent_SERVER_stateUpdate:function(_objWhatData)
 	{
+		//this.debug("CHARACTER.handleEvent_SERVER_stateUpdate().", 1)
 		if (_objWhatData['avatar'])
 		{
-			//alert("X: " + _objWhatData['avatar']['x'] + "\nY: " + _objWhatData['avatar']['y'])
-			this.intXPos = _objWhatData['avatar']['x'];
-			this.intYPos = _objWhatData['avatar']['y'];
-			this.intMoves = _objWhatData['avatar']['moves'];
-			if (this.intLocalMoves == null)
+			if (_objWhatData['avatar']['moves'] >= this.intLocalMoves)
 			{
-				this.intLocalMoves = _objWhatData['avatar']['moves'];
+				//alert("X: " + _objWhatData['avatar']['x'] + "\nY: " + _objWhatData['avatar']['y'])
+				this.intXPos = _objWhatData['avatar']['x'];
+				this.intYPos = _objWhatData['avatar']['y'];
+				this.intMoves = _objWhatData['avatar']['moves'];
+				if (this.intLocalMoves == null)
+				{
+					this.intLocalMoves = _objWhatData['avatar']['moves'];
+				}
 			}
 			this.booUnrenderedUpdates = true;
 			//this.debug("CHARACTER.handleEvent_SERVER_turnInfo(), this:",1, this);
@@ -37,6 +41,7 @@ var CHARACTER =
 
 	handleEvent_localCharacterUpdate : function (_objWhatData)
 	{
+		//this.debug("CHARACTER.handleEvent_localCharacterUpdate().", 1)
 		//alert("X: " + _objWhatData['avatar']['x'] + "\nY: " + _objWhatData['avatar']['y'])
 		this.intXPos = _objWhatData['x'];
 		this.intYPos = _objWhatData['y'];
