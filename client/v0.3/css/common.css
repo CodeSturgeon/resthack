@@ -92,6 +92,14 @@ img
 	top:10px;
 	left:66px;
 }
+
+#exploreID
+{
+	position:absolute;
+	top:15px;
+	left:166px;
+}
+
 #testCommandsHolderID
 {
 	position:absolute;

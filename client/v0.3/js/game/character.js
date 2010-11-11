@@ -11,6 +11,12 @@ var CHARACTER =
 	intMoves:null,
 	intLocalMoves:null,
 
+	_objExplorationLiterals : {"TurnLeft" : TURN_LEFT_EXPLORER},
+
+	_strCurrExplorer : "TurnLeft",
+
+	intDirection : 1,
+
 	booUnrenderedUpdates : false,
 
 	getData:function ()
@@ -49,6 +55,18 @@ var CHARACTER =
 		this.booUnrenderedUpdates = true;
 		//this.debug("CHARACTER.handleEvent_SERVER_turnInfo(), this:",1, this);
 	},
+
+	handleEvent_explore : function ()
+	{
+		var _objCurrExplorationObject = this._objExplorationLiterals[this._strCurrExplorer];
+		var _intNewMoveDirection = _objCurrExplorationObject.getNextMove();
+		//alert("_intNewMoveDirection: " + _intNewMoveDirection);
+		EM.trigger("navigate", _intNewMoveDirection);
+	},
+
+	//_objExplorationLiterals : {"TurnLeft" : TURN_LEFT_EXPLORER},
+
+	//_strCurrExplorer
 
 	debug : function (strMessage, intPriority, objCallerObject, booCalleeChain)
 	{

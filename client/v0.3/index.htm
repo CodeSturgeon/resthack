@@ -8,6 +8,9 @@
 		<script type="text/javascript" language="JavaScript" src="js/eventmanager.js"></script>
 		<script type="text/javascript" language="JavaScript" src="js/timer_tracker.js"></script>
 
+
+		<script type="text/javascript" language="JavaScript" src="js/game/turn_left_ai.js"></script>
+
 		<!--<script type="text/javascript" language="JavaScript" src="js/fakeydata.js"></script>-->
 
 		<script type="text/javascript" language="JavaScript" src="js/gui/screen_renderer.js"></script>
@@ -17,6 +20,7 @@
 
 		<script type="text/javascript" language="JavaScript" src="js/game/map.js"></script>
 		<script type="text/javascript" language="JavaScript" src="js/game/character.js"></script>
+
 
 		<script type="text/javascript" language="JavaScript" src="js/io/server_io_jsonp.js"></script>
 
@@ -35,6 +39,7 @@
 					<div id="leftArrowID"><input type="button" value="&lArr;" onclick="EM.trigger('navigate',8)"/></div>
 					<div id="rightArrowID"><input type="button" value="&rArr;" onclick="EM.trigger('navigate',2)"/></div>
 				</div>
+				<input id="exploreID" type="button" value="EXPLORE!" onclick="EM.trigger('explore')"/>
 				<!--
 				<div id="testCommandsHolderID">
 					<a href="#" onclick="EM.trigger('generateTileData');">Output current map</a>
