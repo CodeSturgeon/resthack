@@ -8,6 +8,9 @@ img
 	border: none;
 }
 
+.redC{color:red;}
+.greenC{color:green;}
+
 #contentWrapperID
 {
 	position:relative;

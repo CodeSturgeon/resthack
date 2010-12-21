@@ -6,65 +6,75 @@ var TURN_LEFT_EXPLORER =
 	getNextMove : function ()
 	{
 		var _intCurrDirection = CHARACTER.intDirection;
+		var _intReverseDirection = null;
 
-		var _objMoveTest = this._testMoveDirection(_intCurrDirection)
+		//MESSAGER.say("Trying to move left...", "redC");
+		var _newValue = _intCurrDirection >> 1
 
-		//alert("_intCurrDirection: " + _intCurrDirection)
-
-		// If we can, keep on moving in the current direction
+		if (_newValue < 1)
+		{
+			_newValue = 8;
+		}
+		//MESSAGER.say("_newValue: " + _newValue + ", _intCurrDirection: " + _intCurrDirection, "greenC");
+		//alert(_newValue)
+		var _objMoveTest = this._testMoveDirection(_newValue)
 		if (_objMoveTest)
 		{
+			//MESSAGER.say("New direction works, moving left!", "redC");
+			return _newValue;
+		}
+		//MESSAGER.say("Trying to move ahead...", "greenC");
+		var _objMoveTest = this._testMoveDirection(_intCurrDirection);
+		if (_objMoveTest)
+		{
+			//MESSAGER.say("I can move ahead so I will.", "redC");
 			return _intCurrDirection;
 		}
 		else
 		{
-			//return 4;
-			var _newValue = _intCurrDirection >> 1
+			//MESSAGER.say("Trying to move in a different direction", "greenC");
+			var _newValue = _newValue >> 1;
 			if (_newValue < 1)
 			{
 				_newValue = 8;
 			}
+			//MESSAGER.say("_newValue: " + _newValue + ", _intCurrDirection: " + _intCurrDirection, "greenC");
 			//alert(_newValue)
-			var _objMoveTest = this._testMoveDirection(_newValue)
+			var _objMoveTest = this._testMoveDirection(_newValue);
+			// This direction is behind us, its backtracking and thus the least preferable solution.
 			if (_objMoveTest)
 			{
-				return _intCurrDirection;
+				_intReverseDirection = _newValue;
+			}
+
+			var _newValue = _newValue >> 1;
+			if (_newValue < 1)
+			{
+				_newValue = 8;
+			}
+			//MESSAGER.say("_newValue: " + _newValue + ", _intCurrDirection: " + _intCurrDirection, "greenC");
+			//alert(_newValue)
+			var _objMoveTest = this._testMoveDirection(_newValue);
+			if (_objMoveTest)
+			{
+				return _newValue;
+			}
+
+			if (_intReverseDirection)
+			{
+				//MESSAGER.say("Reversing!", "redC");
+				return _intReverseDirection;
 			}
 			else
 			{
-				var _newValue = _newValue >> 1
-				if (_newValue < 1)
-				{
-					_newValue = 8;
-				}
-				//alert(_newValue)
-				var _objMoveTest = this._testMoveDirection(_newValue)
-				if (_objMoveTest)
-				{
-					return _newValue;
-				}
-				else
-				{
-					var _newValue = _newValue >> 1
-					if (_newValue < 1)
-					{
-						_newValue = 8;
-					}
-					//alert(_newValue)
-					var _objMoveTest = this._testMoveDirection(_newValue)
-					if (_objMoveTest)
-					{
-						return _newValue;
-					}
-					else
-					{
-						alert("I'm in a box?")
-					}
-				}
+				alert("I'm in a box?!?")
 			}
 
-			//alert("Base: " + _intCurrDirection + "\nNew: " + _newValue)
+
 		}
+
+			//alert("Base: " + _intCurrDirection + "\nNew: " + _newValue)
+		//}
 	},
 
 	_testMoveDirection : function (_intWhatDirection)
