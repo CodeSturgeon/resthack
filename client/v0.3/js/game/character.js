@@ -11,9 +11,9 @@ var CHARACTER =
 	intMoves:null,
 	intLocalMoves:null,
 
-	_objExplorationLiterals : {"TurnLeft" : TURN_LEFT_EXPLORER},
+	_objExplorationLiterals : {"TurnLeft" : TURN_LEFT_EXPLORER, "Graph" : GRAPH_EXPLORER},
 
-	_strCurrExplorer : "TurnLeft",
+	_strCurrExplorer : "Graph",
 
 	intDirection : 1,
 
