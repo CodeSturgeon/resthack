@@ -22,7 +22,7 @@ var DEBUG =
 	updateCyclicRate : 500,
 
 	// Use this to filter out different message level's.
-	debugPriorityThreshold :0,
+	debugPriorityThreshold :5,
 
 	// If set to true, the message's will be written out using document.write()
 	// if false, .innerHTML().

@@ -22,6 +22,7 @@ var GRAPH_EXPLORER_2 =
 
 	_updateNodesList : function ()
 	{
+		this._arrTargetNodes = [];
 		var _objTilesList = MAP_HOLDER.objMapTiles;
 		for (var _strCurrKey in _objTilesList)
 		{
@@ -90,10 +91,47 @@ var GRAPH_EXPLORER_2 =
 
 	_pickTarget : function ()
 	{
-		var _objStartNode = MAP_HOLDER.objMapTiles[CHARACTER.intXPos + MAP_HOLDER.strTileKeySeperator + CHARACTER.intYPos];
+		var _objOrigin = MAP_HOLDER.objMapTiles[CHARACTER.intXPos + MAP_HOLDER.strTileKeySeperator + CHARACTER.intYPos];
 
-		var _arrTargetOptimalLengths = this._getShortestPathsToTargets(_objStartNode);
+		var _arrTargetOptimalLengths = this._getShortestPathsToTargets(_objOrigin);
 
+		var count = 0;
+		var _objCurrTarget = null;
+		while (count < _arrTargetOptimalLengths.length)
+		{
+			var _intCurrTargetIndex = _arrTargetOptimalLengths[count]['intIndex'];
+			var _intCurrTargetShortestPath = _arrTargetOptimalLengths[count]['intLength'];
+			var _objCurrTarget = this._arrTargetNodes[_intCurrTargetIndex];
+
+			var _objPathData = this._getShortestPath(_objOrigin, _objCurrTarget, _intCurrTargetShortestPath);
+
+			if (_objPathData)
+			{
+				// If we're our optimal path is equal to the returned path, use this target.
+				if (_objPathData['intPathLength'] == _intCurrTargetShortestPath)
+				{
+					break;
+				}
+				// If we're shorter/equal to the next targets minimum path length, use this target.
+				if (_objPathData['intPathLength'] <= _arrTargetOptimalLengths[(count + 1)]['intLength'])
+				{
+					break;
+				}
+			}
+			count++;
+		}
+		return {"objBestTarget":_objCurrTarget, "arrPathSequence":_objPathData['arrPathSequence']};
+
+		/*
+		var count = 0;
+		var _strAlertString = "";
+		while (count < _arrTargetOptimalLengths.length)
+		{
+			_strAlertString += "intLength: " + _arrTargetOptimalLengths[count]['intLength'] + " - intIndex: " + _arrTargetOptimalLengths[count]['intIndex'] + "\n";
+			count++;
+		}
+		alert(_strAlertString)
+		*/
 	},
 
 	_getShortestPathsToTargets : function (_objWhatOrigin)
@@ -103,14 +141,31 @@ var GRAPH_EXPLORER_2 =
 		while (count < this._arrTargetNodes.length)
 		{
 			var _objCurrTarget = this._arrTargetNodes[count];
-			_arrTargetPathLengths[count] = Math.abs(_objCurrTarget.x - _objWhatOrigin.x) + Math.abs(_objCurrTarget.y - _objWhatOrigin.y);
+			_arrTargetPathLengths[count] = {"intLength":Math.abs(_objCurrTarget.x - _objWhatOrigin.x) + Math.abs(_objCurrTarget.y - _objWhatOrigin.y), "intIndex":count};
 			var _domCurrTile = document.getElementById("tileX_" + _objCurrTarget.x + "_Y_" + _objCurrTarget.y + "_ID");
-			this._highlightTile(_domCurrTile, "#ff0000", "T", "Potential Target, optimal distance: " + _arrTargetPathLengths[count]);
-
+			this._highlightTile(_domCurrTile, "#ff0000", "T", "Potential Target, optimal distance: " + _arrTargetPathLengths[count]['intLength']);
 			count++;
 		}
+		return _arrTargetPathLengths.sort(GRAPH_EXPLORER_2.sortPathArray);
 	},
 
+	sortPathArray : function (a, b)
+	{
+		if (a.intLength > b.intLength)
+		{
+			return 1;
+		}
+		if (a.intLength == b.intLength)
+		{
+			return 0;
+		}
+		return -1;
+	},
+
+	_getShortestPath : function (_objOrigin, _objTarget, _intBestPossiblePathLength)
+	{
+
+	},
 
 	_highlightTile : function (_domWhatTile, _strWhatColor, _chaWhatCharacter, _strWhatTitle)
 	{
