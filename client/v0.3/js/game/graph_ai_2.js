@@ -93,7 +93,7 @@ var GRAPH_EXPLORER_2 =
 	{
 		var _objOrigin = MAP_HOLDER.objMapTiles[CHARACTER.intXPos + MAP_HOLDER.strTileKeySeperator + CHARACTER.intYPos];
 
-		var _arrTargetOptimalLengths = this._getShortestPathsToTargets(_objOrigin);
+		var _arrTargetOptimalLengths = this._getDistanceToTargets(_objOrigin);
 
 		var count = 0;
 		var _objCurrTarget = null;
@@ -105,6 +105,7 @@ var GRAPH_EXPLORER_2 =
 
 			var _objPathData = this._getShortestPath(_objOrigin, _objCurrTarget, _intCurrTargetShortestPath);
 
+
 			if (_objPathData)
 			{
 				// If we're our optimal path is equal to the returned path, use this target.
@@ -113,7 +114,7 @@ var GRAPH_EXPLORER_2 =
 					break;
 				}
 				// If we're shorter/equal to the next targets minimum path length, use this target.
-				if (_objPathData['intPathLength'] <= _arrTargetOptimalLengths[(count + 1)]['intLength'])
+				if ((_arrTargetOptimalLengths[(count + 1)]) && (_objPathData['intPathLength'] <= _arrTargetOptimalLengths[(count + 1)]['intLength']))
 				{
 					break;
 				}
@@ -121,27 +122,16 @@ var GRAPH_EXPLORER_2 =
 			count++;
 		}
 		return {"objBestTarget":_objCurrTarget, "arrPathSequence":_objPathData['arrPathSequence']};
-
-		/*
-		var count = 0;
-		var _strAlertString = "";
-		while (count < _arrTargetOptimalLengths.length)
-		{
-			_strAlertString += "intLength: " + _arrTargetOptimalLengths[count]['intLength'] + " - intIndex: " + _arrTargetOptimalLengths[count]['intIndex'] + "\n";
-			count++;
-		}
-		alert(_strAlertString)
-		*/
 	},
 
-	_getShortestPathsToTargets : function (_objWhatOrigin)
+	_getDistanceToTargets : function (_objWhatOrigin)
 	{
 		var _arrTargetPathLengths = [];
 		var count = 0;
 		while (count < this._arrTargetNodes.length)
 		{
 			var _objCurrTarget = this._arrTargetNodes[count];
-			_arrTargetPathLengths[count] = {"intLength":Math.abs(_objCurrTarget.x - _objWhatOrigin.x) + Math.abs(_objCurrTarget.y - _objWhatOrigin.y), "intIndex":count};
+			_arrTargetPathLengths[count] = {"intLength":this._getDistance(_objWhatOrigin, _objCurrTarget), "intIndex":count};
 			var _domCurrTile = document.getElementById("tileX_" + _objCurrTarget.x + "_Y_" + _objCurrTarget.y + "_ID");
 			this._highlightTile(_domCurrTile, "#ff0000", "T", "Potential Target, optimal distance: " + _arrTargetPathLengths[count]['intLength']);
 			count++;
@@ -164,7 +154,60 @@ var GRAPH_EXPLORER_2 =
 
 	_getShortestPath : function (_objOrigin, _objTarget, _intBestPossiblePathLength)
 	{
+		var _objOpenNodes = new OpenNodeList(_objOrigin, _intBestPossiblePathLength);
+		var _arrClosedNodes = [];
+		var _objCurrNode = _objOrigin;
+		var count = 0;
+		var _intCurrRank = _intBestPossiblePathLength;
+		while ((_objCurrNode !== _objTarget) && (count < 100000))
+		{
+			_arrClosedNodes.push(_objCurrNode);
+			var iCount = 0;
+			if (!_objCurrNode)
+			{
+				return false;
+			}
+			while (iCount < _objCurrNode.arrNeighbours.length)
+			{
+				var _intTotalCost = _objCurrNode.intDistanceToOrigin + 1;
+				var _objCurrNeighbour = _objCurrNode.arrNeighbours[iCount];
 
+				var _booIsInOpen = _objOpenNodes.containsNode(_objCurrNeighbour)
+
+				// If neighbor is in _objOpenNodes and the current cost is less then remove that neighbour
+				if ((_booIsInOpen) && (_intTotalCost < _objCurrNeighbour.intDistanceToOrigin))
+				{
+					_objOpenNodes.removeNode(_objCurrNeighbour);
+				}
+
+				// If neighbor is in _arrClosedNodes and the current cost is less then remove that neighbour
+				var _intClosedIndex = _arrClosedNodes.contains(_objCurrNeighbour);
+				if ((_intClosedIndex !== null) && (_intTotalCost < _objCurrNeighbour.intDistanceToOrigin))
+				{
+					_arrClosedNodes.splice(_intClosedIndex, 1);
+				}
+
+				if ((!_booIsInOpen) && (_intClosedIndex === null))
+				{
+					var _intGlobalDistance = _intTotalCost + this._getDistance(_objCurrNeighbour, _objTarget);
+					_objOpenNodes.insertNode(_objCurrNeighbour, _intTotalCost, _intGlobalDistance);
+					_intCurrRank = _intGlobalDistance;
+					_objCurrNeighbour.objCurrParent = _objCurrNode;
+				}
+
+				iCount++;
+			}
+
+			_objCurrNode = _objOpenNodes.getAndRemoveBestNode(_intCurrRank);
+			count++;
+		}
+		//alert(1)
+		return _objOpenNodes;
+	},
+
+	_getDistance : function (_objWhatOrigin, _objWhatTarget)
+	{
+		return Math.abs(_objWhatTarget.x - _objWhatOrigin.x) + Math.abs(_objWhatTarget.y - _objWhatOrigin.y);
 	},
 
 	_highlightTile : function (_domWhatTile, _strWhatColor, _chaWhatCharacter, _strWhatTitle)
@@ -182,4 +225,113 @@ var GRAPH_EXPLORER_2 =
 			DEBUG.lert(strMessage, intPriority, objCallerObject, booCalleeChain);
 		}
 	}
+}
+
+
+function OpenNodeList(_objWhatOrigin, _intWhatTargetDistance)
+{
+	this.objOrigin = _objWhatOrigin;
+
+	this.objOpenNodesByOriginDistance = {};
+	this.objOpenNodesByGlobalDistance = {};
+	this.arrReferencedNodes = [];
+
+	this.insertNode(this.objOrigin, 0, _intWhatTargetDistance);
+}
+
+OpenNodeList.prototype.insertNode = insertNode;
+OpenNodeList.prototype.removeNode = removeNode;
+OpenNodeList.prototype.getAndRemoveBestNode = getAndRemoveBestNode;
+OpenNodeList.prototype.containsNode = containsNode;
+
+
+function insertNode(_objWhatNode, _intDistanceToOrigin, _intGlobalDistance)
+{
+	_objWhatNode.intDistanceToOrigin = _intDistanceToOrigin;
+	_objWhatNode.intGlobalDistance = _intGlobalDistance;
+
+	// This shouldn't happen, but if we have it already, it needs re-catergorizing.
+	if (this.containsNode(_objWhatNode))
+	{
+		this.removeNode(_objWhatNode);
+	}
+
+	this.arrReferencedNodes.push(_objWhatNode);
+
+	if (!this.objOpenNodesByOriginDistance[_intDistanceToOrigin])
+	{
+		this.objOpenNodesByOriginDistance[_intDistanceToOrigin] = [];
+	}
+	this.objOpenNodesByOriginDistance[_intDistanceToOrigin].push(_objWhatNode);
+
+	if (!this.objOpenNodesByGlobalDistance[_intGlobalDistance])
+	{
+		this.objOpenNodesByGlobalDistance[_intGlobalDistance] = [];
+	}
+	this.objOpenNodesByGlobalDistance[_intGlobalDistance].push(_objWhatNode);
+}
+
+
+function removeNode(_objWhatNode, _intDistanceToOrigin, _intGlobalDistance)
+{
+	var _intNodeIndex = this.arrReferencedNodes.contains(_objWhatNode);
+	if (_intNodeIndex != null)
+	{
+		this.arrReferencedNodes.splice(_intNodeIndex, 1);
+	}
+
+	var _arrCurrNodeSet = this.objOpenNodesByOriginDistance[_intDistanceToOrigin];
+	var _intNodeIndex = _arrCurrNodeSet.contains(_objWhatNode);
+	if (_intNodeIndex != null)
+	{
+		_arrCurrNodeSet.splice(_intNodeIndex, 1);
+	}
+
+	var _arrCurrNodeSet = this.objOpenNodesByGlobalDistance[_intGlobalDistance];
+	var _intNodeIndex = _arrCurrNodeSet.contains(_objWhatNode);
+	if (_intNodeIndex != null)
+	{
+		_arrCurrNodeSet.splice(_intNodeIndex, 1);
+	}
+}
+
+function getAndRemoveBestNode(_intCurrDistanceRank)
+{
+	var _arrCurrNodeSet = this.objOpenNodesByGlobalDistance[_intCurrDistanceRank]
+	if (_arrCurrNodeSet)
+	{
+		if (_arrCurrNodeSet.length > 0)
+		{
+			var _objBestNode = _arrCurrNodeSet[0];
+			this.removeNode(_objBestNode, _objBestNode.intDistanceToOrigin, _objBestNode.intGlobalDistance)
+			return _objBestNode;
+		}
+		return false;
+	}
+	return false;
+}
+
+function containsNode(_objWhatNode)
+{
+	if (this.arrReferencedNodes.contains(_objWhatNode) != null)
+	{
+		return true;
+	}
+	return false;
+}
+
+Array.prototype.contains = arrayContains;
+
+function arrayContains(_objElement)
+{
+	var count = 0;
+	while (count < this.length)
+	{
+		if (this[count] === _objElement)
+		{
+			return count;
+		}
+		count++;
+	}
+	return null;
 }
