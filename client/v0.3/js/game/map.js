@@ -5,7 +5,7 @@ var MAP_HOLDER =
 
 	strTileKeySeperator : "_",
 
-	objMapTiles:[],
+	objMapTiles:{},
 
 	_arrQueuedMoveRequests : [],
 	_booWaitingResponse : false,

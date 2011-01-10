@@ -15,9 +15,29 @@ var GRAPH_EXPLORER_2 =
 		this._updateNodesList();
 
 		// See which potential target has the shortest distance from the orgin
-		this._pickTarget();
+		var _objMoveData = this._pickTarget();
 
 		// Generate a movement list
+		//return _objTargetData['arrPathData'][0];
+		var _objOrigin = _objMoveData['objOrigin'];
+		var _objNextTile = _objMoveData['arrPathData'][0];
+
+		if (_objOrigin.y > _objNextTile.y)
+		{
+			return 4;
+		}
+		if (_objOrigin.y < _objNextTile.y)
+		{
+			return 1;
+		}
+		if (_objOrigin.x > _objNextTile.x)
+		{
+			return 8;
+		}
+		if (_objOrigin.x < _objNextTile.x)
+		{
+			return 2;
+		}
 	},
 
 	_updateNodesList : function ()
@@ -101,27 +121,41 @@ var GRAPH_EXPLORER_2 =
 		{
 			var _intCurrTargetIndex = _arrTargetOptimalLengths[count]['intIndex'];
 			var _intCurrTargetShortestPath = _arrTargetOptimalLengths[count]['intLength'];
+
+			if (_objCurrTarget)
+			{
+				var _domCurrTile = document.getElementById("tileX_" + _objCurrTarget.x + "_Y_" + _objCurrTarget.y + "_ID");
+				this._highlightTile(_domCurrTile, "#ffff00", "T", "Examined Target");
+			}
 			var _objCurrTarget = this._arrTargetNodes[_intCurrTargetIndex];
+			var _domCurrTile = document.getElementById("tileX_" + _objCurrTarget.x + "_Y_" + _objCurrTarget.y + "_ID");
+			this._highlightTile(_domCurrTile, "#00ff00", "T", "Current Target");
 
-			var _objPathData = this._getShortestPath(_objOrigin, _objCurrTarget, _intCurrTargetShortestPath);
-
+			var _objPathData = this._getPathData(_objOrigin, _objCurrTarget, _intCurrTargetShortestPath);
 
 			if (_objPathData)
 			{
 				// If we're our optimal path is equal to the returned path, use this target.
 				if (_objPathData['intPathLength'] == _intCurrTargetShortestPath)
 				{
+					//alert("Found shortest path")
+					//var _domCurrTile = document.getElementById("tileX_" + _objCurrTarget.x + "_Y_" + _objCurrTarget.y + "_ID");
+					//this._highlightTile(_domCurrTile, "#00ff00", "T", "Potential Target, distance: " + _objPathData['intPathLength']);
 					break;
 				}
 				// If we're shorter/equal to the next targets minimum path length, use this target.
 				if ((_arrTargetOptimalLengths[(count + 1)]) && (_objPathData['intPathLength'] <= _arrTargetOptimalLengths[(count + 1)]['intLength']))
 				{
+					//alert("Path ain't that short, but its shorter than the next one.");
+					//var _domCurrTile = document.getElementById("tileX_" + _objCurrTarget.x + "_Y_" + _objCurrTarget.y + "_ID");
+					//this._highlightTile(_domCurrTile, "#00ff00", "T", "Potential Target, distance: " + _objPathData['intPathLength']);
 					break;
 				}
 			}
 			count++;
+			//alert(count)
 		}
-		return {"objBestTarget":_objCurrTarget, "arrPathSequence":_objPathData['arrPathSequence']};
+		return {"objBestTarget":_objCurrTarget, "objOrigin":_objOrigin, "arrPathData":_objPathData['arrPathData']};
 	},
 
 	_getDistanceToTargets : function (_objWhatOrigin)
@@ -152,8 +186,9 @@ var GRAPH_EXPLORER_2 =
 		return -1;
 	},
 
-	_getShortestPath : function (_objOrigin, _objTarget, _intBestPossiblePathLength)
+	_getPathData : function(_objOrigin, _objTarget, _intBestPossiblePathLength)
 	{
+		this._unhighlightAllTiles();
 		var _objOpenNodes = new OpenNodeList(_objOrigin, _intBestPossiblePathLength);
 		var _arrClosedNodes = [];
 		var _objCurrNode = _objOrigin;
@@ -161,53 +196,87 @@ var GRAPH_EXPLORER_2 =
 		var _intCurrRank = _intBestPossiblePathLength;
 		while ((_objCurrNode !== _objTarget) && (count < 100000))
 		{
-			_arrClosedNodes.push(_objCurrNode);
-			var iCount = 0;
 			if (!_objCurrNode)
 			{
+				//alert("Nobody nodes...")
 				return false;
 			}
+			_arrClosedNodes.push(_objCurrNode);
+			var iCount = 0;
 			while (iCount < _objCurrNode.arrNeighbours.length)
 			{
 				var _intTotalCost = _objCurrNode.intDistanceToOrigin + 1;
 				var _objCurrNeighbour = _objCurrNode.arrNeighbours[iCount];
 
-				var _booIsInOpen = _objOpenNodes.containsNode(_objCurrNeighbour)
-
-				// If neighbor is in _objOpenNodes and the current cost is less then remove that neighbour
-				if ((_booIsInOpen) && (_intTotalCost < _objCurrNeighbour.intDistanceToOrigin))
+				if (_objCurrNeighbour)
 				{
-					_objOpenNodes.removeNode(_objCurrNeighbour);
-				}
+					var _booIsInOpen = _objOpenNodes.containsNode(_objCurrNeighbour)
 
-				// If neighbor is in _arrClosedNodes and the current cost is less then remove that neighbour
-				var _intClosedIndex = _arrClosedNodes.contains(_objCurrNeighbour);
-				if ((_intClosedIndex !== null) && (_intTotalCost < _objCurrNeighbour.intDistanceToOrigin))
-				{
-					_arrClosedNodes.splice(_intClosedIndex, 1);
-				}
+					// If neighbor is in _objOpenNodes and the current cost is less then remove that neighbour
+					if ((_booIsInOpen) && (_intTotalCost < _objCurrNeighbour.intDistanceToOrigin))
+					{
+						_objOpenNodes.removeNode(_objCurrNeighbour, _objCurrNeighbour.intDistanceToOrigin, _objCurrNeighbour.intGlobalDistance);
+					}
 
-				if ((!_booIsInOpen) && (_intClosedIndex === null))
-				{
-					var _intGlobalDistance = _intTotalCost + this._getDistance(_objCurrNeighbour, _objTarget);
-					_objOpenNodes.insertNode(_objCurrNeighbour, _intTotalCost, _intGlobalDistance);
-					_intCurrRank = _intGlobalDistance;
-					_objCurrNeighbour.objCurrParent = _objCurrNode;
-				}
+					// If neighbor is in _arrClosedNodes and the current cost is less then remove that neighbour
+					var _intClosedIndex = _arrClosedNodes.contains(_objCurrNeighbour);
+					if ((_intClosedIndex !== null) && (_intTotalCost < _objCurrNeighbour.intDistanceToOrigin))
+					{
+						_arrClosedNodes.splice(_intClosedIndex, 1);
+					}
 
+					if ((!_booIsInOpen) && (_intClosedIndex === null))
+					{
+						var _intGlobalDistance = _intTotalCost + this._getDistance(_objCurrNeighbour, _objTarget);
+						//alert("_intGlobalDistance: " + _intGlobalDistance + "\n_intTotalCost: " + _intTotalCost + "\n_objCurrNeighbour: " + _objCurrNeighbour)
+						_objOpenNodes.insertNode(_objCurrNeighbour, _intTotalCost, _intGlobalDistance);
+						_intCurrRank = _intGlobalDistance;
+						_objCurrNeighbour.objCurrParent = _objCurrNode;
+						var _domCurrTile = document.getElementById("tileX_" + _objCurrNeighbour.x + "_Y_" + _objCurrNeighbour.y + "_ID");
+						this._highlightTile(_domCurrTile, "#00ff00", "O", "Was added to open.");
+					}
+				}
 				iCount++;
 			}
-
 			_objCurrNode = _objOpenNodes.getAndRemoveBestNode(_intCurrRank);
 			count++;
 		}
-		//alert(1)
-		return _objOpenNodes;
+		//alert("Pathing analysis complete.")
+		_arrPathData = this._createPath(_objOpenNodes, _objOrigin, _objTarget);
+
+		return {"arrPathData":_arrPathData, "intPathLength":_arrPathData.length};
+	},
+
+	_createPath : function (_objWhatNodeData, _objOrigin, _objTarget)
+	{
+		var _arrPath = [];
+		var _objCurrNode = _objTarget;
+		while (_objCurrNode !== _objOrigin)
+		{
+			//alert(_objCurrNode.x + " | " + _objCurrNode.y)
+			_arrPath.push(_objCurrNode);
+			_objCurrNode = _objCurrNode.objCurrParent;
+		}
+		return _arrPath.reverse();
 	},
 
 	_getDistance : function (_objWhatOrigin, _objWhatTarget)
 	{
 		return Math.abs(_objWhatTarget.x - _objWhatOrigin.x) + Math.abs(_objWhatTarget.y - _objWhatOrigin.y);
+	},
+
+	_unhighlightAllTiles : function ()
+	{
+		for (var _strCurrKey in MAP_HOLDER.objMapTiles)
+		{
+			var _objCurrTile = MAP_HOLDER.objMapTiles[_strCurrKey];
+			//alert(_objCurrTile)
+			var _domCurrTile = document.getElementById("tileX_" + _objCurrTile.x + "_Y_" + _objCurrTile.y + "_ID");
+			_domCurrTile.innerHTML = "";
+			_domCurrTile.style.border = "0px solid red";
+			_domCurrTile.title = "";
+			_domCurrTile.style.zIndex = "auto";
+		}
 	},
 
 	_highlightTile : function (_domWhatTile, _strWhatColor, _chaWhatCharacter, _strWhatTitle)
@@ -253,7 +322,7 @@ function insertNode(_objWhatNode, _intDistanceToOrigin, _intGlobalDistance)
 	// This shouldn't happen, but if we have it already, it needs re-catergorizing.
 	if (this.containsNode(_objWhatNode))
 	{
-		this.removeNode(_objWhatNode);
+		this.removeNode(_objWhatNode, _objWhatNode.intDistanceToOrigin, _objWhatNode.intGlobalDistance);
 	}
 
 	this.arrReferencedNodes.push(_objWhatNode);
@@ -280,6 +349,7 @@ function removeNode(_objWhatNode, _intDistanceToOrigin, _intGlobalDistance)
 		this.arrReferencedNodes.splice(_intNodeIndex, 1);
 	}
 
+	//alert("_intOriginFunction:" + _intOriginFunction + "\n_intDistanceToOrigin: " + _intDistanceToOrigin)
 	var _arrCurrNodeSet = this.objOpenNodesByOriginDistance[_intDistanceToOrigin];
 	var _intNodeIndex = _arrCurrNodeSet.contains(_objWhatNode);
 	if (_intNodeIndex != null)
@@ -297,7 +367,12 @@ function removeNode(_objWhatNode, _intDistanceToOrigin, _intGlobalDistance)
 
 function getAndRemoveBestNode(_intCurrDistanceRank)
 {
-	var _arrCurrNodeSet = this.objOpenNodesByGlobalDistance[_intCurrDistanceRank]
+	if (_intCurrDistanceRank < 0)
+	{
+		alert("No open nodes remaining...")
+		return false;
+	}
+	var _arrCurrNodeSet = this.objOpenNodesByGlobalDistance[_intCurrDistanceRank];
 	if (_arrCurrNodeSet)
 	{
 		if (_arrCurrNodeSet.length > 0)
@@ -306,9 +381,13 @@ function getAndRemoveBestNode(_intCurrDistanceRank)
 			this.removeNode(_objBestNode, _objBestNode.intDistanceToOrigin, _objBestNode.intGlobalDistance)
 			return _objBestNode;
 		}
-		return false;
+		var _objBestNode = this.getAndRemoveBestNode(_intCurrDistanceRank - 1);
+		//alert(_objBestNode)
+		return _objBestNode;
 	}
-	return false;
+	var _objBestNode = this.getAndRemoveBestNode(_intCurrDistanceRank - 1);
+	//alert(_objBestNode)
+	return _objBestNode;
 }
 
 function containsNode(_objWhatNode)
@@ -321,7 +400,6 @@ function containsNode(_objWhatNode)
 }
 
 Array.prototype.contains = arrayContains;
-
 function arrayContains(_objElement)
 {
 	var count = 0;
