@@ -17,26 +17,31 @@ var GRAPH_EXPLORER_2 =
 		// See which potential target has the shortest distance from the orgin
 		var _objMoveData = this._pickTarget();
 
-		// Generate a movement list
-		//return _objTargetData['arrPathData'][0];
-		var _objOrigin = _objMoveData['objOrigin'];
-		var _objNextTile = _objMoveData['arrPathData'][0];
+		if (_objMoveData)
+		{
+			var _objOrigin = _objMoveData['objOrigin'];
+			var _objNextTile = _objMoveData['arrPathData'][0];
 
-		if (_objOrigin.y > _objNextTile.y)
-		{
-			return 4;
+			if (_objOrigin.y > _objNextTile.y)
+			{
+				return 4;
+			}
+			if (_objOrigin.y < _objNextTile.y)
+			{
+				return 1;
+			}
+			if (_objOrigin.x > _objNextTile.x)
+			{
+				return 8;
+			}
+			if (_objOrigin.x < _objNextTile.x)
+			{
+				return 2;
+			}
 		}
-		if (_objOrigin.y < _objNextTile.y)
+		else
 		{
-			return 1;
-		}
-		if (_objOrigin.x > _objNextTile.x)
-		{
-			return 8;
-		}
-		if (_objOrigin.x < _objNextTile.x)
-		{
-			return 2;
+			alert("Unable to find a reachable target...");
 		}
 	},
 
@@ -114,9 +119,11 @@ var GRAPH_EXPLORER_2 =
 		var _objOrigin = MAP_HOLDER.objMapTiles[CHARACTER.intXPos + MAP_HOLDER.strTileKeySeperator + CHARACTER.intYPos];
 
 		var _arrTargetOptimalLengths = this._getDistanceToTargets(_objOrigin);
+		var _arrValidPaths = [];
 
 		var count = 0;
 		var _objCurrTarget = null;
+		var _objPathData = null;
 		while (count < _arrTargetOptimalLengths.length)
 		{
 			var _intCurrTargetIndex = _arrTargetOptimalLengths[count]['intIndex'];
@@ -131,7 +138,7 @@ var GRAPH_EXPLORER_2 =
 			var _domCurrTile = document.getElementById("tileX_" + _objCurrTarget.x + "_Y_" + _objCurrTarget.y + "_ID");
 			this._highlightTile(_domCurrTile, "#00ff00", "T", "Current Target");
 
-			var _objPathData = this._getPathData(_objOrigin, _objCurrTarget, _intCurrTargetShortestPath);
+			_objPathData = this._getPathData(_objOrigin, _objCurrTarget, _intCurrTargetShortestPath);
 
 			if (_objPathData)
 			{
@@ -151,11 +158,26 @@ var GRAPH_EXPLORER_2 =
 					//this._highlightTile(_domCurrTile, "#00ff00", "T", "Potential Target, distance: " + _objPathData['intPathLength']);
 					break;
 				}
+
+				// Otherwise store the path for later, we might get a better one, if not we'll use the lowest we can find.
+				_arrValidPaths.push({"objBestTarget":_objCurrTarget, "objOrigin":_objOrigin, "arrPathData":_objPathData['arrPathData']});
 			}
 			count++;
 			//alert(count)
 		}
-		return {"objBestTarget":_objCurrTarget, "objOrigin":_objOrigin, "arrPathData":_objPathData['arrPathData']};
+		if (_objPathData)
+		{
+			return {"objBestTarget":_objCurrTarget, "objOrigin":_objOrigin, "arrPathData":_objPathData['arrPathData']};
+		}
+		else if (_arrValidPaths)
+		{
+			alert("Found a sub-optimal path...")
+			return _arrValidPaths[0];
+		}
+		else
+		{
+			return false;
+		}
 	},
 
 	_getDistanceToTargets : function (_objWhatOrigin)
@@ -189,13 +211,23 @@ var GRAPH_EXPLORER_2 =
 	_getPathData : function(_objOrigin, _objTarget, _intBestPossiblePathLength)
 	{
 		this._unhighlightAllTiles();
+
+		var _domCurrTile = document.getElementById("tileX_" + _objTarget.x + "_Y_" + _objTarget.y + "_ID");
+		this._highlightTile(_domCurrTile, "#ff0000", "T", "Current Target");
+
+		//alert(1)
+
 		var _objOpenNodes = new OpenNodeList(_objOrigin, _intBestPossiblePathLength);
 		var _arrClosedNodes = [];
 		var _objCurrNode = _objOrigin;
 		var count = 0;
 		var _intCurrRank = _intBestPossiblePathLength;
-		while ((_objCurrNode !== _objTarget) && (count < 100000))
+		while ((!this._isCurrentTarget(_objCurrNode, _objTarget)) && (count < 100000))
 		{
+			var _domCurrTile = document.getElementById("tileX_" + _objCurrNode.x + "_Y_" + _objCurrNode.y + "_ID");
+			var _strTitleText = "Set to current node, _intTotalCost: " + _objCurrNode.intTotalCost + ", _intGlobalDistance: " + _objCurrNode.intGlobalDistance
+			this._highlightTile(_domCurrTile, "#0000ff", "C", _strTitleText);
+
 			if (!_objCurrNode)
 			{
 				//alert("Nobody nodes...")
@@ -216,6 +248,9 @@ var GRAPH_EXPLORER_2 =
 					if ((_booIsInOpen) && (_intTotalCost < _objCurrNeighbour.intDistanceToOrigin))
 					{
 						_objOpenNodes.removeNode(_objCurrNeighbour, _objCurrNeighbour.intDistanceToOrigin, _objCurrNeighbour.intGlobalDistance);
+						//var _domCurrTile = document.getElementById("tileX_" + _objCurrNeighbour.x + "_Y_" + _objCurrNeighbour.y + "_ID");
+						//this._highlightTile(_domCurrTile, "#ffff00", "R", "Was removed from open, _intTotalCost: " + _objCurrNeighbour.intDistanceToOrigin + ", _intGlobalDistance: " + _objCurrNeighbour.intGlobalDistance);
+						//alert("Removed, cost was too high...");
 					}
 
 					// If neighbor is in _arrClosedNodes and the current cost is less then remove that neighbour
@@ -230,10 +265,17 @@ var GRAPH_EXPLORER_2 =
 						var _intGlobalDistance = _intTotalCost + this._getDistance(_objCurrNeighbour, _objTarget);
 						//alert("_intGlobalDistance: " + _intGlobalDistance + "\n_intTotalCost: " + _intTotalCost + "\n_objCurrNeighbour: " + _objCurrNeighbour)
 						_objOpenNodes.insertNode(_objCurrNeighbour, _intTotalCost, _intGlobalDistance);
-						_intCurrRank = _intGlobalDistance;
+
+						if (_intGlobalDistance < _intCurrRank)
+						{
+							_intCurrRank = _intGlobalDistance;
+						}
+
 						_objCurrNeighbour.objCurrParent = _objCurrNode;
 						var _domCurrTile = document.getElementById("tileX_" + _objCurrNeighbour.x + "_Y_" + _objCurrNeighbour.y + "_ID");
-						this._highlightTile(_domCurrTile, "#00ff00", "O", "Was added to open.");
+						var _strTitleText = "Was added to open, _intTotalCost: " + _intTotalCost + ", _intGlobalDistance: " + _intGlobalDistance
+						this._highlightTile(_domCurrTile, "#00ff00", "O", _strTitleText);
+						alert("Inserted, _strTitleText: " + _strTitleText);
 					}
 				}
 				iCount++;
@@ -245,6 +287,16 @@ var GRAPH_EXPLORER_2 =
 		_arrPathData = this._createPath(_objOpenNodes, _objOrigin, _objTarget);
 
 		return {"arrPathData":_arrPathData, "intPathLength":_arrPathData.length};
+	},
+
+	_isCurrentTarget : function(_objCurrTile, _objTargetTile)
+	{
+		if ((_objCurrTile.x != _objTargetTile.x) || (_objCurrTile.y != _objTargetTile.y))
+		{
+			return false;
+		}
+		alert("Target reached...");
+		return true;
 	},
 
 	_createPath : function (_objWhatNodeData, _objOrigin, _objTarget)
@@ -369,7 +421,7 @@ function getAndRemoveBestNode(_intCurrDistanceRank)
 {
 	if (_intCurrDistanceRank < 0)
 	{
-		alert("No open nodes remaining...")
+		//alert("No open nodes remaining...")
 		return false;
 	}
 	var _arrCurrNodeSet = this.objOpenNodesByGlobalDistance[_intCurrDistanceRank];
