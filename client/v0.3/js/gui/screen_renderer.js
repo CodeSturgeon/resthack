@@ -23,7 +23,7 @@ var SCREEN_RENDERER =
 		"character":"<div id='thePlayerID' style='top:%1px; left:%2px;' class='actor'>&nbsp;</div>",
 
 		// Base tile
-		"tile":"<div id='tileX_%1_Y_%2_ID' style='top:%3px; left:%4px;' class='baseTile XXTILE_SHAPE_CLASSXX'>&nbsp;</div>",
+		"tile":"<div id='tileX_%1_Y_%2_ID' style='top:%3px; left:%4px;' onclick='EM.trigger(\"tileClicked\", this)' class='baseTile XXTILE_SHAPE_CLASSXX'>&nbsp;</div>",
 	},
 
 

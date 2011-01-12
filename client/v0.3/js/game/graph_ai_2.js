@@ -9,6 +9,24 @@ var GRAPH_EXPLORER_2 =
 	_arrCurrShortestPath : [],
 	_objCurrTarget : null,
 
+	handleEvent_tileClicked : function (_domWhatTile)
+	{
+		// Collect neighbours and identify potential target nodes
+		this._updateNodesList();
+
+		var _objOriginTile = MAP_HOLDER.objMapTiles[CHARACTER.intXPos + MAP_HOLDER.strTileKeySeperator + CHARACTER.intYPos];
+
+		var _arrIDSplit = _domWhatTile.id.split("_");
+		var _objTargetTile = MAP_HOLDER.objMapTiles[_arrIDSplit[1] + MAP_HOLDER.strTileKeySeperator + _arrIDSplit[3]];
+
+		//alert("_objOriginTile: " + _objOriginTile + "\n_objTargetTile: " + _objTargetTile)
+
+		var _intTargetShortestPath = this._getDistance(_objOriginTile, _objTargetTile);
+
+		var _objPathData = this._getPathData(_objOriginTile, _objTargetTile, _intTargetShortestPath);
+
+	},
+
 	getNextMove : function ()
 	{
 		// Collect neighbours and identify potential target nodes
@@ -224,21 +242,28 @@ var GRAPH_EXPLORER_2 =
 		var _intCurrRank = _intBestPossiblePathLength;
 		while ((!this._isCurrentTarget(_objCurrNode, _objTarget)) && (count < 100000))
 		{
-			var _domCurrTile = document.getElementById("tileX_" + _objCurrNode.x + "_Y_" + _objCurrNode.y + "_ID");
-			var _strTitleText = "Set to current node, _intTotalCost: " + _objCurrNode.intTotalCost + ", _intGlobalDistance: " + _objCurrNode.intGlobalDistance
-			this._highlightTile(_domCurrTile, "#0000ff", "C", _strTitleText);
-
 			if (!_objCurrNode)
 			{
 				//alert("Nobody nodes...")
 				return false;
 			}
+
+			var _domCurrTile = document.getElementById("tileX_" + _objCurrNode.x + "_Y_" + _objCurrNode.y + "_ID");
+			var _strTitleText = "Set to current node, _intTotalCost: " + _objCurrNode.intTotalCost + ", _intGlobalDistance: " + _objCurrNode.intGlobalDistance
+			this._highlightTile(_domCurrTile, "#0000ff", "C", _strTitleText);
+
 			_arrClosedNodes.push(_objCurrNode);
 			var iCount = 0;
 			while (iCount < _objCurrNode.arrNeighbours.length)
 			{
 				var _intTotalCost = _objCurrNode.intDistanceToOrigin + 1;
 				var _objCurrNeighbour = _objCurrNode.arrNeighbours[iCount];
+
+				if (this._isCurrentTarget(_objCurrNeighbour, _objTarget))
+				{
+					_objCurrNeighbour.objCurrParent = _objCurrNode;
+					break;
+				}
 
 				if (_objCurrNeighbour)
 				{
@@ -348,6 +373,7 @@ var GRAPH_EXPLORER_2 =
 	}
 }
 
+EM.register(GRAPH_EXPLORER_2)
 
 function OpenNodeList(_objWhatOrigin, _intWhatTargetDistance)
 {
