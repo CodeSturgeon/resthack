@@ -70,10 +70,11 @@ var GRAPH_EXPLORER_2 =
 		for (var _strCurrKey in _objTilesList)
 		{
 			var _objCurrTile = _objTilesList[_strCurrKey];
-			if (!_objCurrTile.booNodeLinksSet)
-			{
-				this._setNodeLinks(_objCurrTile);
-			}
+			this._setNodeLinks(_objCurrTile);
+			//if (!_objCurrTile.booNodeLinksSet)
+			//{
+			// this._setNodeLinks(_objCurrTile);
+			//}
 		}
 	},
 
@@ -147,14 +148,14 @@ var GRAPH_EXPLORER_2 =
 			var _intCurrTargetIndex = _arrTargetOptimalLengths[count]['intIndex'];
 			var _intCurrTargetShortestPath = _arrTargetOptimalLengths[count]['intLength'];
 
-			if (_objCurrTarget)
-			{
-				var _domCurrTile = document.getElementById("tileX_" + _objCurrTarget.x + "_Y_" + _objCurrTarget.y + "_ID");
-				this._highlightTile(_domCurrTile, "#ffff00", "T", "Examined Target");
-			}
+			//if (_objCurrTarget)
+			//{
+			//	var _domCurrTile = document.getElementById("tileX_" + _objCurrTarget.x + "_Y_" + _objCurrTarget.y + "_ID");
+			//	this._highlightTile(_domCurrTile, "#ffff00", "T", "Examined Target");
+			//}
 			var _objCurrTarget = this._arrTargetNodes[_intCurrTargetIndex];
-			var _domCurrTile = document.getElementById("tileX_" + _objCurrTarget.x + "_Y_" + _objCurrTarget.y + "_ID");
-			this._highlightTile(_domCurrTile, "#00ff00", "T", "Current Target");
+			//var _domCurrTile = document.getElementById("tileX_" + _objCurrTarget.x + "_Y_" + _objCurrTarget.y + "_ID");
+			//this._highlightTile(_domCurrTile, "#00ff00", "T", "Current Target");
 
 			_objPathData = this._getPathData(_objOrigin, _objCurrTarget, _intCurrTargetShortestPath);
 
@@ -190,6 +191,8 @@ var GRAPH_EXPLORER_2 =
 		else if (_arrValidPaths)
 		{
 			alert("Found a sub-optimal path...")
+			var _domCurrTile = document.getElementById("tileX_" + _arrValidPaths[0][0].x + "_Y_" + _arrValidPaths[0][0].y + "_ID");
+			this._highlightTile(_domCurrTile, "#00ff00", "T", "Next Tile");
 			return _arrValidPaths[0];
 		}
 		else
@@ -206,8 +209,8 @@ var GRAPH_EXPLORER_2 =
 		{
 			var _objCurrTarget = this._arrTargetNodes[count];
 			_arrTargetPathLengths[count] = {"intLength":this._getDistance(_objWhatOrigin, _objCurrTarget), "intIndex":count};
-			var _domCurrTile = document.getElementById("tileX_" + _objCurrTarget.x + "_Y_" + _objCurrTarget.y + "_ID");
-			this._highlightTile(_domCurrTile, "#ff0000", "T", "Potential Target, optimal distance: " + _arrTargetPathLengths[count]['intLength']);
+			//var _domCurrTile = document.getElementById("tileX_" + _objCurrTarget.x + "_Y_" + _objCurrTarget.y + "_ID");
+			//this._highlightTile(_domCurrTile, "#ff0000", "T", "Potential Target, optimal distance: " + _arrTargetPathLengths[count]['intLength']);
 			count++;
 		}
 		return _arrTargetPathLengths.sort(GRAPH_EXPLORER_2.sortPathArray);
@@ -228,10 +231,10 @@ var GRAPH_EXPLORER_2 =
 
 	_getPathData : function(_objOrigin, _objTarget, _intBestPossiblePathLength)
 	{
-		this._unhighlightAllTiles();
+		//this._unhighlightAllTiles();
 
-		var _domCurrTile = document.getElementById("tileX_" + _objTarget.x + "_Y_" + _objTarget.y + "_ID");
-		this._highlightTile(_domCurrTile, "#ff0000", "T", "Current Target");
+		//var _domCurrTile = document.getElementById("tileX_" + _objTarget.x + "_Y_" + _objTarget.y + "_ID");
+		//this._highlightTile(_domCurrTile, "#ff0000", "T", "Current Target");
 
 		//alert(1)
 
@@ -248,9 +251,9 @@ var GRAPH_EXPLORER_2 =
 				return false;
 			}
 
-			var _domCurrTile = document.getElementById("tileX_" + _objCurrNode.x + "_Y_" + _objCurrNode.y + "_ID");
-			var _strTitleText = "Set to current node, _intTotalCost: " + _objCurrNode.intTotalCost + ", _intGlobalDistance: " + _objCurrNode.intGlobalDistance
-			this._highlightTile(_domCurrTile, "#0000ff", "C", _strTitleText);
+			//var _domCurrTile = document.getElementById("tileX_" + _objCurrNode.x + "_Y_" + _objCurrNode.y + "_ID");
+			//var _strTitleText = "Set to current node, _intTotalCost: " + _objCurrNode.intTotalCost + ", _intGlobalDistance: " + _objCurrNode.intGlobalDistance
+			//this._highlightTile(_domCurrTile, "#0000ff", "C", _strTitleText);
 
 			_arrClosedNodes.push(_objCurrNode);
 			var iCount = 0;
@@ -259,14 +262,16 @@ var GRAPH_EXPLORER_2 =
 				var _intTotalCost = _objCurrNode.intDistanceToOrigin + 1;
 				var _objCurrNeighbour = _objCurrNode.arrNeighbours[iCount];
 
-				if (this._isCurrentTarget(_objCurrNeighbour, _objTarget))
-				{
-					_objCurrNeighbour.objCurrParent = _objCurrNode;
-					break;
-				}
-
 				if (_objCurrNeighbour)
 				{
+					if (this._isCurrentTarget(_objCurrNeighbour, _objTarget))
+					{
+						_objCurrNeighbour.objCurrParent = _objCurrNode;
+						_arrPathData = this._createPath(_objOpenNodes, _objOrigin, _objTarget);
+
+						return {"arrPathData":_arrPathData, "intPathLength":_arrPathData.length};
+					}
+
 					var _booIsInOpen = _objOpenNodes.containsNode(_objCurrNeighbour)
 
 					// If neighbor is in _objOpenNodes and the current cost is less then remove that neighbour
@@ -297,15 +302,15 @@ var GRAPH_EXPLORER_2 =
 						}
 
 						_objCurrNeighbour.objCurrParent = _objCurrNode;
-						var _domCurrTile = document.getElementById("tileX_" + _objCurrNeighbour.x + "_Y_" + _objCurrNeighbour.y + "_ID");
-						var _strTitleText = "Was added to open, _intTotalCost: " + _intTotalCost + ", _intGlobalDistance: " + _intGlobalDistance
-						this._highlightTile(_domCurrTile, "#00ff00", "O", _strTitleText);
-						alert("Inserted, _strTitleText: " + _strTitleText);
+						//var _domCurrTile = document.getElementById("tileX_" + _objCurrNeighbour.x + "_Y_" + _objCurrNeighbour.y + "_ID");
+						//var _strTitleText = "Was added to open, _intTotalCost: " + _intTotalCost + ", _intGlobalDistance: " + _intGlobalDistance
+						//this._highlightTile(_domCurrTile, "#00ff00", "O", _strTitleText);
+						//alert("Inserted, _strTitleText: " + _strTitleText);
 					}
 				}
 				iCount++;
 			}
-			_objCurrNode = _objOpenNodes.getAndRemoveBestNode(_intCurrRank);
+			_objCurrNode = _objOpenNodes.getAndRemoveBestNode(1);
 			count++;
 		}
 		//alert("Pathing analysis complete.")
@@ -320,7 +325,7 @@ var GRAPH_EXPLORER_2 =
 		{
 			return false;
 		}
-		alert("Target reached...");
+		//alert("Target reached...");
 		return true;
 	},
 
@@ -383,6 +388,8 @@ function OpenNodeList(_objWhatOrigin, _intWhatTargetDistance)
 	this.objOpenNodesByGlobalDistance = {};
 	this.arrReferencedNodes = [];
 
+	this._intHighestPriority = 0;
+
 	this.insertNode(this.objOrigin, 0, _intWhatTargetDistance);
 }
 
@@ -414,8 +421,14 @@ function insertNode(_objWhatNode, _intDistanceToOrigin, _intGlobalDistance)
 	if (!this.objOpenNodesByGlobalDistance[_intGlobalDistance])
 	{
 		this.objOpenNodesByGlobalDistance[_intGlobalDistance] = [];
+		if (_intGlobalDistance > this._intHighestPriority)
+		{
+			this._intHighestPriority = _intGlobalDistance;
+		}
 	}
 	this.objOpenNodesByGlobalDistance[_intGlobalDistance].push(_objWhatNode);
+
+
 }
 
 
@@ -427,7 +440,6 @@ function removeNode(_objWhatNode, _intDistanceToOrigin, _intGlobalDistance)
 		this.arrReferencedNodes.splice(_intNodeIndex, 1);
 	}
 
-	//alert("_intOriginFunction:" + _intOriginFunction + "\n_intDistanceToOrigin: " + _intDistanceToOrigin)
 	var _arrCurrNodeSet = this.objOpenNodesByOriginDistance[_intDistanceToOrigin];
 	var _intNodeIndex = _arrCurrNodeSet.contains(_objWhatNode);
 	if (_intNodeIndex != null)
@@ -443,14 +455,9 @@ function removeNode(_objWhatNode, _intDistanceToOrigin, _intGlobalDistance)
 	}
 }
 
-function getAndRemoveBestNode(_intCurrDistanceRank)
+function getAndRemoveBestNode(_intCurrRank)
 {
-	if (_intCurrDistanceRank < 0)
-	{
-		//alert("No open nodes remaining...")
-		return false;
-	}
-	var _arrCurrNodeSet = this.objOpenNodesByGlobalDistance[_intCurrDistanceRank];
+	var _arrCurrNodeSet = this.objOpenNodesByGlobalDistance[_intCurrRank];
 	if (_arrCurrNodeSet)
 	{
 		if (_arrCurrNodeSet.length > 0)
@@ -459,12 +466,26 @@ function getAndRemoveBestNode(_intCurrDistanceRank)
 			this.removeNode(_objBestNode, _objBestNode.intDistanceToOrigin, _objBestNode.intGlobalDistance)
 			return _objBestNode;
 		}
-		var _objBestNode = this.getAndRemoveBestNode(_intCurrDistanceRank - 1);
-		//alert(_objBestNode)
+		_intCurrRank++;
+		if (_intCurrRank <= this._intHighestPriority)
+		{
+			var _objBestNode = this.getAndRemoveBestNode(_intCurrRank);
+		}
+		else
+		{
+			var _objBestNode = false;
+		}
 		return _objBestNode;
 	}
-	var _objBestNode = this.getAndRemoveBestNode(_intCurrDistanceRank - 1);
-	//alert(_objBestNode)
+	_intCurrRank++;
+	if (_intCurrRank <= this._intHighestPriority)
+	{
+		var _objBestNode = this.getAndRemoveBestNode(_intCurrRank);
+	}
+	else
+	{
+		var _objBestNode = false;
+	}
 	return _objBestNode;
 }
 
