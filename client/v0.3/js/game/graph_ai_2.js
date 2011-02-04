@@ -40,22 +40,27 @@ var GRAPH_EXPLORER_2 =
 			var _objOrigin = _objMoveData['objOrigin'];
 			var _objNextTile = _objMoveData['arrPathData'][0];
 
-			if (_objOrigin.y > _objNextTile.y)
+			// If the map hasn't updated, then we won't have a new tile to move into
+			if (_objNextTile)
 			{
-				return 4;
+				if (_objOrigin.y > _objNextTile.y)
+				{
+					return 1;
+				}
+				if (_objOrigin.y < _objNextTile.y)
+				{
+					return 4;
+				}
+				if (_objOrigin.x > _objNextTile.x)
+				{
+					return 8;
+				}
+				if (_objOrigin.x < _objNextTile.x)
+				{
+					return 2;
+				}
 			}
-			if (_objOrigin.y < _objNextTile.y)
-			{
-				return 1;
-			}
-			if (_objOrigin.x > _objNextTile.x)
-			{
-				return 8;
-			}
-			if (_objOrigin.x < _objNextTile.x)
-			{
-				return 2;
-			}
+			//alert("Don't know how to move there?")
 		}
 		else
 		{
@@ -310,7 +315,7 @@ var GRAPH_EXPLORER_2 =
 				}
 				iCount++;
 			}
-			_objCurrNode = _objOpenNodes.getAndRemoveBestNode(1);
+			_objCurrNode = _objOpenNodes.getAndRemoveBestNode(0);
 			count++;
 		}
 		//alert("Pathing analysis complete.")
@@ -331,13 +336,24 @@ var GRAPH_EXPLORER_2 =
 
 	_createPath : function (_objWhatNodeData, _objOrigin, _objTarget)
 	{
+		//this._unhighlightAllTiles();
 		var _arrPath = [];
 		var _objCurrNode = _objTarget;
 		while (_objCurrNode !== _objOrigin)
 		{
 			//alert(_objCurrNode.x + " | " + _objCurrNode.y)
+			//var _domCurrTile = document.getElementById("tileX_" + _objCurrNode.x + "_Y_" + _objCurrNode.y + "_ID");
+			//this._highlightTile(_domCurrTile, "green", "P", "Path tile")
 			_arrPath.push(_objCurrNode);
-			_objCurrNode = _objCurrNode.objCurrParent;
+			if (_objCurrNode.objCurrParent)
+			{
+				_objCurrNode = _objCurrNode.objCurrParent;
+			}
+			else
+			{
+				//alert("No parent? _objCurrNode.objCurrParent: " + _objCurrNode.objCurrParent)
+				break;
+			}
 		}
 		return _arrPath.reverse();
 	},
@@ -352,7 +368,11 @@ var GRAPH_EXPLORER_2 =
 		for (var _strCurrKey in MAP_HOLDER.objMapTiles)
 		{
 			var _objCurrTile = MAP_HOLDER.objMapTiles[_strCurrKey];
-			//alert(_objCurrTile)
+			//if ((!_objCurrTile) || (!_objCurrTile.x))
+			//{
+			//	alert("_strCurrKey: " + _strCurrKey)
+			//}
+
 			var _domCurrTile = document.getElementById("tileX_" + _objCurrTile.x + "_Y_" + _objCurrTile.y + "_ID");
 			_domCurrTile.innerHTML = "";
 			_domCurrTile.style.border = "0px solid red";
@@ -427,8 +447,6 @@ function insertNode(_objWhatNode, _intDistanceToOrigin, _intGlobalDistance)
 		}
 	}
 	this.objOpenNodesByGlobalDistance[_intGlobalDistance].push(_objWhatNode);
-
-
 }
 
 
